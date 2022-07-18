@@ -18,32 +18,32 @@ import static org.lwjgl.system.MemoryUtil.memAddress;
 public class GlStateManagerExtended extends GlStateManager {
 
     public static int genVertexArrays() {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         return GL30.glGenVertexArrays();
     }
 
     public static void bindVertexArray(int array) {
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL30.glBindVertexArray(array);
     }
 
     public static void enableVertexAttribArray(int array){
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL30.glEnableVertexAttribArray(array);
     }
 
     public static void deleteVertexArrays(int vaoId){
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL30.glDeleteVertexArrays(vaoId);
     }
 
     public static void disableVertexAttribArray(int array){
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL30.glDisableVertexAttribArray(array);
     }
 
     public static void drawElements(int mode, int count, int type, long indices){
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL11.glDrawElements(mode, count, type, indices);
     }
 
@@ -51,7 +51,7 @@ public class GlStateManagerExtended extends GlStateManager {
                                             @NativeType("GLboolean") boolean transpose,
                                             int count,
                                             @NativeType("GLfloat const *") FloatBuffer value){
-        RenderSystem.assertThread(RenderSystem::isOnRenderThreadOrInit);
+        RenderSystem.assertOnGameThreadOrInit();
         GL20C.nglUniformMatrix4fv(location, (count * 16) >> 4, transpose, memAddress(value));
     }
 

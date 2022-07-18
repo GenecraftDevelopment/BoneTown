@@ -1,7 +1,7 @@
 package com.chaosbuffalo.bonetown.core.materials;
 
-import net.minecraft.client.shader.ShaderLoader;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.shaders.Program;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -32,7 +32,7 @@ public class BTMaterialEntry implements IForgeRegistryEntry<BTMaterialEntry> {
         return this;
     }
 
-    public IBTMaterial getProgram(int programId, ShaderLoader vertex, ShaderLoader frag){
+    public IBTMaterial getProgram(int programId, Program vertex, Program frag){
         return new BTMaterial(programId, vertex, frag);
     }
 

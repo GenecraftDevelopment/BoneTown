@@ -3,12 +3,12 @@ package com.chaosbuffalo.bonetown.core.materials;
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.client.render.GlobalRenderInfo;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.Matrix4f;
+import com.mojang.blaze3d.shaders.Program;
+import com.mojang.blaze3d.shaders.ProgramManager;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector4f;
-import net.minecraft.client.shader.ShaderLinkHelper;
-import net.minecraft.client.shader.ShaderLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,8 @@ import java.util.List;
 
 public class BTMaterial implements IBTMaterial {
     protected final int program;
-    protected final ShaderLoader vert;
-    protected final ShaderLoader frag;
+    protected final Program vert;
+    protected final Program frag;
     protected boolean firstUpload;
     protected final static int DIFFUSE_COUNT = 2;
     public MaterialUniform projUniform;
@@ -29,7 +29,7 @@ public class BTMaterial implements IBTMaterial {
     public MaterialUniform diffuseLocs;
     protected final List<MaterialUniform> uniforms = new ArrayList<>();
 
-    public BTMaterial(int program, ShaderLoader vert, ShaderLoader frag) {
+    public BTMaterial(int program, Program vert, Program frag) {
         this.program = program;
         this.vert = vert;
         this.frag = frag;
@@ -58,8 +58,9 @@ public class BTMaterial implements IBTMaterial {
 
     }
 
+
     @Override
-    public void initRender(RenderType renderType, MatrixStack matrixStackIn, Matrix4f projection,
+    public void initRender(RenderType renderType, PoseStack matrixStackIn, Matrix4f projection,
                            int packedLight, int packedOverlay){
 
         this.useProgram();
@@ -68,7 +69,7 @@ public class BTMaterial implements IBTMaterial {
             initStaticValues();
             this.firstUpload = false;
         }
-        this.uploadModelViewMatrix(matrixStackIn.getLast().getMatrix());
+        this.uploadModelViewMatrix(matrixStackIn.last().pose());
         this.uploadProjectionMatrix(projection);
         this.uploadPackedLightMap(packedLight);
         this.uploadPackedOverlay(packedOverlay);
@@ -87,11 +88,6 @@ public class BTMaterial implements IBTMaterial {
     public void endRender(RenderType renderType){
         renderType.clearRenderState();
         this.releaseProgram();
-    }
-
-    @Override
-    public int getProgram() {
-        return program;
     }
 
     @Override
@@ -118,13 +114,22 @@ public class BTMaterial implements IBTMaterial {
                 "Use AnimatedShaderProgram instead.");
     }
 
+    @Override
+    public int getId() {
+        return this.program;
+    }
+
+    @Override
+    public void attachToProgram() {
+
+    }
 
     public void useProgram(){
-        ShaderLinkHelper.func_227804_a_(program);
+        ProgramManager.glUseProgram(program);
     }
 
     public void releaseProgram(){
-        ShaderLinkHelper.func_227804_a_(0);
+        ProgramManager.glUseProgram(0);
     }
 
     public void uploadProjectionMatrix(Matrix4f mat){
@@ -148,25 +153,26 @@ public class BTMaterial implements IBTMaterial {
     }
 
 
-    public void receiveLightingInfo(MatrixStack lightingStack){
+    public void receiveLightingInfo(PoseStack lightingStack){
         Vector4f diffuse0Loc = new Vector4f(GlobalRenderInfo.DIFFUSE_LIGHT_0);
-        diffuse0Loc.transform(lightingStack.getLast().getMatrix());
+        diffuse0Loc.transform(lightingStack.last().pose());
         Vector4f diffuse1Loc = new Vector4f(GlobalRenderInfo.DIFFUSE_LIGHT_1);
-        diffuse1Loc.transform(lightingStack.getLast().getMatrix());
+        diffuse1Loc.transform(lightingStack.last().pose());
 
-        diffuseLocs.set(diffuse0Loc.getX(), diffuse0Loc.getY(), diffuse0Loc.getZ(),
-                diffuse1Loc.getX(), diffuse1Loc.getY(), diffuse1Loc.getZ());
+        diffuseLocs.set(diffuse0Loc.x(), diffuse0Loc.y(), diffuse0Loc.z(),
+                diffuse1Loc.x(), diffuse1Loc.y(), diffuse1Loc.z());
         diffuseLocs.upload();
 
     }
 
+
     @Override
-    public ShaderLoader getVertexShaderLoader() {
+    public Program getVertexProgram() {
         return vert;
     }
 
     @Override
-    public ShaderLoader getFragmentShaderLoader() {
+    public Program getFragmentProgram() {
         return frag;
     }
 }

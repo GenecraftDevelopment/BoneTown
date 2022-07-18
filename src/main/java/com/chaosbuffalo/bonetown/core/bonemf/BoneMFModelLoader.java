@@ -3,7 +3,7 @@ package com.chaosbuffalo.bonetown.core.bonemf;
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.utils.ByteBufferBackedInputStream;
 import com.upokecenter.cbor.CBORObject;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4d;
 import org.joml.Vector4d;
 

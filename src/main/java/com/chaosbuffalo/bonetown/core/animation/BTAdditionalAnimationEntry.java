@@ -7,7 +7,7 @@ import com.chaosbuffalo.bonetown.core.bonemf.BoneMFModelLoader;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.core.model.BTModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.system.MemoryUtil;

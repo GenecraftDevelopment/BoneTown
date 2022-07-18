@@ -5,8 +5,8 @@ import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.core.animation.InterpolationFramesReturn;
 import com.chaosbuffalo.bonetown.core.animation.WeightedAnimationBlend;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 
 public class FullBodyPoseLayer<T extends Entity & IBTAnimatedEntity<T>> extends LayerWithAnimation<T> {

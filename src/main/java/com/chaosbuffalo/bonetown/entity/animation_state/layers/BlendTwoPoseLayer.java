@@ -7,8 +7,8 @@ import com.chaosbuffalo.bonetown.core.animation.WeightedAnimationBlend;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.ChangeBlendWeightMessage;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 public class BlendTwoPoseLayer<T extends Entity & IBTAnimatedEntity<T>> extends LayerWithAnimation<T> {
     public static final String SECOND_SLOT = "SECOND_SLOT";

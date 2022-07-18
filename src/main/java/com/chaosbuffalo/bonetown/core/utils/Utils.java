@@ -1,11 +1,9 @@
 package com.chaosbuffalo.bonetown.core.utils;
 
 import com.chaosbuffalo.bonetown.BoneTown;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -31,11 +29,12 @@ public class Utils {
 
 
     public static void readLightTextureData(){
-        LightTexture tex = Minecraft.getInstance().gameRenderer.getLightTexture();
+        LightTexture tex = Minecraft.getInstance().gameRenderer.lightTexture();
 
         Field privateField = null;
         try {
-            privateField = LightTexture.class.getDeclaredField("field_205111_b");
+            // todo Access Transformer
+            privateField = LightTexture.class.getDeclaredField("lightPixels");
             privateField.setAccessible(true);
             try {
                 NativeImage image = (NativeImage)privateField.get(tex);
@@ -55,8 +54,5 @@ public class Utils {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-
-
-
     }
 }

@@ -2,8 +2,7 @@ package com.chaosbuffalo.bonetown.entity.animation_state.messages.layer;
 
 import com.chaosbuffalo.bonetown.entity.animation_state.layers.LayerWithAnimation;
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class ChangeLayerAnimationMessage extends AnimationLayerMessage {
     public static String CHANGE_ANIMATION_TYPE = "CHANGE_ANIMATION_TYPE";

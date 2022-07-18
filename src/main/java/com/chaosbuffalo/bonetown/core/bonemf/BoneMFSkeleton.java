@@ -4,7 +4,7 @@ import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.animation.AnimationFrame;
 import com.chaosbuffalo.bonetown.core.animation.BakedAnimation;
 import com.chaosbuffalo.bonetown.core.animation.Pose;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4d;
 import javax.annotation.Nullable;
 import java.util.*;

@@ -5,15 +5,16 @@ import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.core.materials.IBTMaterial;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.IHasHandBones;
-import com.mojang.blaze3d.matrix.MatrixStack;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.HandSide;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -26,36 +27,39 @@ public class AnimatedHeldItemLayer<T extends LivingEntity & IBTAnimatedEntity<T>
         super(entityRenderer);
     }
 
+
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer renderBuffer, int packedLight, T entityIn,
+    public void render(PoseStack matrixStack, MultiBufferSource renderBuffer, int packedLight, T entityIn,
                        IPose pose, float partialTicks, float ageInTicks, IBTMaterial currentMaterial,
                        Matrix4f projectionMatrix) {
-        boolean isRightHanded = entityIn.getPrimaryHand() == HandSide.RIGHT;
-        ItemStack leftHandItem = isRightHanded ? entityIn.getHeldItemOffhand() : entityIn.getHeldItemMainhand();
-        ItemStack rightHandItem = isRightHanded ? entityIn.getHeldItemMainhand() : entityIn.getHeldItemOffhand();
+
+        ItemStack rightHandItem = entityIn.getMainHandItem();
+        ItemStack leftHandItem =  entityIn.getOffhandItem();
+
         if (!leftHandItem.isEmpty() || !rightHandItem.isEmpty()) {
-            renderItemInHand(entityIn, pose, rightHandItem, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND,
-                    HandSide.RIGHT, matrixStack, renderBuffer, packedLight);
-            renderItemInHand(entityIn, pose, leftHandItem, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND,
-                    HandSide.LEFT, matrixStack, renderBuffer, packedLight);
+            renderItemInHand(entityIn, pose, rightHandItem, ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND,
+                    true, matrixStack, renderBuffer, packedLight);
+            renderItemInHand(entityIn, pose, leftHandItem, ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND,
+                    false, matrixStack, renderBuffer, packedLight);
         }
     }
 
     private void renderItemInHand(T entity, IPose pose, ItemStack itemStack,
-                                  ItemCameraTransforms.TransformType cameraTransform,
-                                  HandSide handSide, MatrixStack matrixStack,
-                                  IRenderTypeBuffer bufferIn, int packedLight) {
+                                  ItemTransforms.TransformType cameraTransform,
+                                  boolean mainHand, PoseStack matrixStack,
+                                  MultiBufferSource bufferIn, int packedLight) {
         if (!itemStack.isEmpty()) {
-            matrixStack.push();
-            boolean isLeftHand = handSide == HandSide.LEFT;
-            BTAnimatedEntityRenderer<T> renderer = getEntityRenderer();
-            String boneName = isLeftHand ? entity.getLeftHandBoneName() : entity.getRightHandBoneName();
+            matrixStack.pushPose();
+            final var renderer = getEntityRenderer();
+
+            String boneName = mainHand ? entity.getLeftHandBoneName() : entity.getRightHandBoneName();
             renderer.moveMatrixStackToBone(entity, boneName, matrixStack, pose);
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(90.0f));
-            matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F));
-            Minecraft.getInstance().getFirstPersonRenderer().renderItemSide(entity, itemStack, cameraTransform,
-                    isLeftHand, matrixStack, bufferIn, packedLight);
-            matrixStack.pop();
+            matrixStack.mulPose(Vector3f.XP.rotationDegrees(90.0f));
+            matrixStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+
+            Minecraft.getInstance().getItemInHandRenderer().renderItem(entity, itemStack, cameraTransform,
+                    mainHand, matrixStack, bufferIn, packedLight);
+            matrixStack.popPose();
         }
 
     }

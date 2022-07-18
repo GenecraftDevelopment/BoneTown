@@ -6,8 +6,8 @@ import com.chaosbuffalo.bonetown.core.BoneTownRegistry;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFArmorModel;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFModelLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.system.MemoryUtil;
@@ -27,7 +27,7 @@ public class BTArmorModelEntry implements IForgeRegistryEntry<BTArmorModelEntry>
     private final List<String> bodyMeshes;
     private final List<String> legMeshes;
     private final List<String> feetMeshes;
-    private final IArmorMaterial material;
+    private final ArmorMaterial material;
 
     public BTArmorModelEntry(ResourceLocation name, ResourceLocation modelName,
                              ResourceLocation modelFile,
@@ -40,7 +40,7 @@ public class BTArmorModelEntry implements IForgeRegistryEntry<BTArmorModelEntry>
                              ResourceLocation modelFile,
                              List<String> headMeshes, List<String> bodyMeshes,
                              List<String> legMeshes, List<String> feetMeshes,
-                             IArmorMaterial material){
+                             ArmorMaterial material){
         this.name = name;
         this.headMeshes = headMeshes;
         this.bodyMeshes = bodyMeshes;

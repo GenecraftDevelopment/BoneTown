@@ -1,6 +1,6 @@
 package com.chaosbuffalo.bonetown.core.model;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class BakedArmorMeshes {
 

@@ -1,8 +1,8 @@
 package com.chaosbuffalo.bonetown.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Quaternion;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaterniond;
@@ -13,7 +13,7 @@ import java.nio.FloatBuffer;
 @OnlyIn(Dist.CLIENT)
 public class BTClientMathUtils {
 
-    public static void applyTransformToStack(org.joml.Matrix4d inMat, MatrixStack inStack){
+    public static void applyTransformToStack(org.joml.Matrix4d inMat, PoseStack inStack){
         Vector3d translation = new Vector3d();
         inMat.getTranslation(translation);
         Quaterniond quat = new Quaterniond();
@@ -22,7 +22,7 @@ public class BTClientMathUtils {
         inMat.getScale(scale);
         Quaternion mcQuat = new Quaternion((float) quat.x(), (float) quat.y(), (float) quat.z(), (float)quat.w());
         inStack.translate(translation.x(), translation.y(), translation.z());
-        inStack.rotate(mcQuat);
+        inStack.mulPose(mcQuat);
         inStack.scale((float) scale.x(), (float) scale.y(), (float) scale.z());
     }
 
@@ -49,7 +49,7 @@ public class BTClientMathUtils {
 
     public static org.joml.Matrix4f toJOMLMat(Matrix4f inMat){
         FloatBuffer matIn = FloatBuffer.allocate(16);
-        inMat.write(matIn);
+        inMat.store(matIn);
         org.joml.Matrix4f result = new org.joml.Matrix4f();
         result.m00(matIn.get(0));
         result.m10(matIn.get(1));

@@ -1,9 +1,9 @@
 package com.chaosbuffalo.bonetown.core.bonemf;
 
-import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.model.BakedAnimatedMesh;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ public class BoneMFArmorModel extends BoneMFModel {
         this.feetMeshes = feetMeshes;
     }
 
-    private List<String> getSubMeshesForSlot(EquipmentSlotType slotType){
+    private List<String> getSubMeshesForSlot(EquipmentSlot slotType){
         switch (slotType){
             case FEET:
                 return getFeetMeshes();
@@ -38,8 +38,8 @@ public class BoneMFArmorModel extends BoneMFModel {
         }
     }
 
-    public BakedAnimatedMesh getCombinedMeshForSlot(EquipmentSlotType slotType){
-        if (slotType == EquipmentSlotType.MAINHAND || slotType == EquipmentSlotType.OFFHAND){
+    public BakedAnimatedMesh getCombinedMeshForSlot(EquipmentSlot slotType){
+        if (slotType == EquipmentSlot.MAINHAND || slotType == EquipmentSlot.OFFHAND){
             return null;
         }
         return getCombinedMeshForSubMeshes(getSubMeshesForSlot(slotType));

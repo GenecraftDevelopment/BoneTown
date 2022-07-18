@@ -1,12 +1,11 @@
 package com.chaosbuffalo.bonetown.client.render;
 
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.Vector3f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,10 +19,10 @@ public class RenderEventListener {
     @SuppressWarnings("unused")
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void cameraSetup(EntityViewRenderEvent.CameraSetup event){
-        MatrixStack matrixStack = new MatrixStack();
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(event.getRoll()));
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(event.getPitch()));
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(event.getYaw() + 180.0F));
+        PoseStack matrixStack = new PoseStack();
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(event.getRoll()));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(event.getPitch()));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(event.getYaw() + 180.0F));
         GlobalRenderInfo.INFO.setCurrentFrameGlobal(matrixStack);
     }
 

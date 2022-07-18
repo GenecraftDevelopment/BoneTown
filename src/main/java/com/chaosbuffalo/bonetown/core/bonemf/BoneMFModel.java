@@ -4,7 +4,7 @@ import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.utils.Utils;
 import com.chaosbuffalo.bonetown.core.model.BakedAnimatedMesh;
 import com.chaosbuffalo.bonetown.core.model.BakedMesh;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.joml.Matrix4d;
 import org.joml.Vector4d;

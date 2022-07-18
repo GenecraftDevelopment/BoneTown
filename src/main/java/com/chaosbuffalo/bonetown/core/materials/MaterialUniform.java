@@ -2,10 +2,12 @@ package com.chaosbuffalo.bonetown.core.materials;
 
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.client.render.platform.GlStateManagerExtended;
+import com.mojang.blaze3d.shaders.Program;
+import com.mojang.blaze3d.shaders.ProgramManager;
+import com.mojang.blaze3d.shaders.Shader;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.shader.IShaderManager;
-import net.minecraft.client.shader.ShaderUniform;
+import com.mojang.math.Matrix4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.system.MemoryUtil;
@@ -91,13 +93,13 @@ public class MaterialUniform implements AutoCloseable {
     private final FloatBuffer uniformFloatBuffer;
     private final String uniformName;
     private boolean dirty;
-    private final IShaderManager shaderManager;
+    private final Shader shaderManager;
 
-    public MaterialUniform(String name, UniformType type, IShaderManager manager){
+    public MaterialUniform(String name, UniformType type, Shader manager){
         this(name, type, 1, manager);
     }
 
-    public MaterialUniform(String name, UniformType type, int count, IShaderManager manager) {
+    public MaterialUniform(String name, UniformType type, int count, Shader manager) {
         this.uniformName = name;
         this.uniformCount = count;
         this.uniformType = type;
@@ -115,7 +117,7 @@ public class MaterialUniform implements AutoCloseable {
     }
 
     public void bindUniform(int programId){
-        int loc = ShaderUniform.func_227806_a_(programId, this.getUniformName());
+        int loc = Uniform.glGetUniformLocation(programId, this.getUniformName());
         if (loc == -1){
             BoneTown.LOGGER.warn("Error trying to bind loc for {}", this.getUniformName());
         } else {
@@ -182,13 +184,13 @@ public class MaterialUniform implements AutoCloseable {
                 RenderSystem.glUniform4(this.uniformLocation, this.uniformIntBuffer);
                 break;
             case vec2i:
-                GlStateManagerExtended.uniform2i(this.uniformLocation, this.uniformIntBuffer);
+                GlStateManagerExtended._glUniform2(this.uniformLocation, this.uniformIntBuffer);
                 break;
             case vec3i:
-                GlStateManagerExtended.uniform3i(this.uniformLocation, this.uniformIntBuffer);
+                GlStateManagerExtended._glUniform3(this.uniformLocation, this.uniformIntBuffer);
                 break;
             case vec4i:
-                GlStateManagerExtended.uniform4i(this.uniformLocation, this.uniformIntBuffer);
+                GlStateManagerExtended._glUniform4(this.uniformLocation, this.uniformIntBuffer);
                 break;
             default:
                 BoneTown.LOGGER.warn("No method for uploading for {}", this.getUniformName());
@@ -227,7 +229,7 @@ public class MaterialUniform implements AutoCloseable {
     public void set(Matrix4f mat){
         if (uniformType == UniformType.mat4x4){
             this.uniformFloatBuffer.position(0);
-            mat.write(this.uniformFloatBuffer);
+            mat.store(this.uniformFloatBuffer);
             matCount = 1;
             this.markDirty();
         } else {
@@ -309,13 +311,13 @@ public class MaterialUniform implements AutoCloseable {
                 RenderSystem.glUniform4(this.uniformLocation, this.uniformFloatBuffer);
                 break;
             case vec2f:
-                GlStateManagerExtended.uniform2f(this.uniformLocation, this.uniformFloatBuffer);
+                GlStateManagerExtended._glUniform2(this.uniformLocation, this.uniformFloatBuffer);
                 break;
             case vec3f:
-                GlStateManagerExtended.uniform3f(this.uniformLocation, this.uniformFloatBuffer);
+                GlStateManagerExtended._glUniform3(this.uniformLocation, this.uniformFloatBuffer);
                 break;
             case vec4f:
-                GlStateManagerExtended.uniform4f(this.uniformLocation, this.uniformFloatBuffer);
+                GlStateManagerExtended._glUniform4(this.uniformLocation, this.uniformFloatBuffer);
                 break;
             case mat2x2:
                 RenderSystem.glUniformMatrix2(this.uniformLocation, false, this.uniformFloatBuffer);

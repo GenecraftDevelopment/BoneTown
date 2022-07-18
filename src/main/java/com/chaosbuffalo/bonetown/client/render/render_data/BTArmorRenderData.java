@@ -1,7 +1,7 @@
 package com.chaosbuffalo.bonetown.client.render.render_data;
 
 import com.chaosbuffalo.bonetown.core.model.BakedArmorMeshes;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.HashMap;
 
@@ -9,16 +9,16 @@ public class BTArmorRenderData implements IBTRenderDataContainer {
 
     private int frameSinceLastRender;
     private boolean initialized;
-    private final HashMap<EquipmentSlotType, BTAnimatedMeshRenderData> renderData;
+    private final HashMap<EquipmentSlot, BTAnimatedMeshRenderData> renderData;
 
     public BTArmorRenderData(BakedArmorMeshes bakedArmor){
         frameSinceLastRender = 0;
         this.initialized = false;
         this.renderData = new HashMap<>();
-        renderData.put(EquipmentSlotType.HEAD, new BTAnimatedMeshRenderData(bakedArmor.getHead()));
-        renderData.put(EquipmentSlotType.CHEST, new BTAnimatedMeshRenderData(bakedArmor.getBody()));
-        renderData.put(EquipmentSlotType.LEGS, new BTAnimatedMeshRenderData(bakedArmor.getLegs()));
-        renderData.put(EquipmentSlotType.FEET, new BTAnimatedMeshRenderData(bakedArmor.getFeet()));
+        renderData.put(EquipmentSlot.HEAD, new BTAnimatedMeshRenderData(bakedArmor.getHead()));
+        renderData.put(EquipmentSlot.CHEST, new BTAnimatedMeshRenderData(bakedArmor.getBody()));
+        renderData.put(EquipmentSlot.LEGS, new BTAnimatedMeshRenderData(bakedArmor.getLegs()));
+        renderData.put(EquipmentSlot.FEET, new BTAnimatedMeshRenderData(bakedArmor.getFeet()));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BTArmorRenderData implements IBTRenderDataContainer {
         return frameSinceLastRender;
     }
 
-    public void renderSlot(EquipmentSlotType slotType){
+    public void renderSlot(EquipmentSlot slotType){
         if (!initialized){
             return;
         }

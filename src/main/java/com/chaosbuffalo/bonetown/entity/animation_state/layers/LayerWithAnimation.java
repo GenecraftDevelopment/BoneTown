@@ -7,8 +7,8 @@ import com.chaosbuffalo.bonetown.core.bonemf.BoneMFSkeleton;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.ChangeLayerAnimationMessage;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

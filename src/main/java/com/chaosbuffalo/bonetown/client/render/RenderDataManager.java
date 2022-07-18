@@ -4,7 +4,7 @@ import com.chaosbuffalo.bonetown.client.render.render_data.*;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.core.model.BTModel;
 import com.chaosbuffalo.bonetown.core.model.BakedArmorMeshes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

@@ -9,12 +9,12 @@ import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.core.materials.IBTMaterial;
 import com.chaosbuffalo.bonetown.core.model.BTModel;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4d;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,11 +27,11 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
     private BTAnimatedModel animatedModel;
     private final List<IBTAnimatedLayerRenderer<T>> renderLayers;
 
-    protected BTAnimatedEntityRenderer(EntityRendererManager renderManager, BTAnimatedModel model, float shadowSize) {
-        super(renderManager, model);
+    protected BTAnimatedEntityRenderer(EntityRendererProvider.Context ctx, BTAnimatedModel model, float shadowSize) {
+        super(ctx, model);
         this.renderLayers = new ArrayList<>();
         this.animatedModel = model;
-        this.shadowSize = shadowSize;
+        this.shadowRadius = shadowSize;
     }
 
     @Override
@@ -52,11 +52,12 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
         renderLayers.add(layer);
     }
 
-    public void handleEntityOrientation(MatrixStack matrixStackIn, T entity, float partialTicks){
+    public void handleEntityOrientation(PoseStack matrixStackIn, T entity, float partialTicks){
 
     }
 
-    public void moveMatrixStackToBone(T entityIn, String boneName, MatrixStack matrixStack, IPose pose){
+
+    public void moveMatrixStackToBone(T entityIn, String boneName, PoseStack matrixStack, IPose pose){
         BoneMFSkeleton skeleton = entityIn.getSkeleton();
         if (skeleton != null){
             int boneId = skeleton.getBoneId(boneName);
@@ -68,16 +69,16 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
     }
 
     protected float getTimeAlive(T entity, float partialTicks){
-        return entity.ticksExisted + partialTicks;
+        return entity.tickCount + partialTicks;
     }
 
     @Override
     @ParametersAreNonnullByDefault
     public void drawModel(RenderType renderType, T entityIn, float entityYaw,
-                          float partialTicks, MatrixStack matrixStackIn,
+                          float partialTicks, PoseStack matrixStackIn,
                           Matrix4f projectionMatrix, int packedLightIn,
-                          int packedOverlay, IBTMaterial program, IRenderTypeBuffer buffer) {
-        matrixStackIn.push();
+                          int packedOverlay, IBTMaterial program, MultiBufferSource buffer) {
+        matrixStackIn.pushPose();
         handleEntityOrientation(matrixStackIn, entityIn, partialTicks);
         program.initRender(renderType, matrixStackIn, projectionMatrix, packedLightIn, packedOverlay);
         IPose pose = entityIn.getAnimationComponent().getCurrentPose(partialTicks);
@@ -97,6 +98,6 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
             layer.render(matrixStackIn, buffer, packedLightIn, entityIn, pose, partialTicks,
                     getTimeAlive(entityIn, partialTicks), program, projectionMatrix);
         }
-        matrixStackIn.pop();
+        matrixStackIn.popPose();
     }
 }

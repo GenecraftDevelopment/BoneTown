@@ -2,8 +2,8 @@ package com.chaosbuffalo.bonetown.entity.animation_state.layers;
 
 import com.chaosbuffalo.bonetown.core.animation.BakedAnimation;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 
 public class LocomotionLayer<T extends LivingEntity & IBTAnimatedEntity<T>> extends BlendTwoPoseLayer<T> {
 
@@ -14,7 +14,7 @@ public class LocomotionLayer<T extends LivingEntity & IBTAnimatedEntity<T>> exte
 
     @Override
     protected float getBlendAmount() {
-        return getEntity().limbSwingAmount;
+        return getEntity().swingTime;
     }
 
     private void computeDuration(){

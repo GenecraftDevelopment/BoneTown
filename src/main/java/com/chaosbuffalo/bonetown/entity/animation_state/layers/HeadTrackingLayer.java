@@ -4,9 +4,8 @@ import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFNode;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFSkeleton;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import com.chaosbuffalo.bonetown.entity.animation_state.layers.AnimationLayerBase;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4d;
 import org.joml.Vector4d;
 
@@ -43,17 +42,15 @@ public class HeadTrackingLayer<T extends LivingEntity & IBTAnimatedEntity<T>> ex
         BoneMFNode bone = skeleton.getBone(getBoneName());
         T entity = getEntity();
         if (bone != null) {
-            float bodyYaw = MathHelper.interpolateAngle(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
-            float headYaw = MathHelper.interpolateAngle(partialTicks, entity.prevRotationYawHead, entity.rotationYawHead);
-            boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null &&
-                    entity.getRidingEntity().shouldRiderSit());
+            float bodyYaw = Mth.lerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+            float headYaw = Mth.lerp(partialTicks, entity.yHeadRotO, entity.yHeadRotO);
+            boolean shouldSit = entity.isPassenger() && (entity.getVehicle() != null &&
+                    entity.getVehicle().shouldRiderSit());
             float netHeadYaw = headYaw - bodyYaw;
-            if (shouldSit && entity.getRidingEntity() instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity) entity.getRidingEntity();
-                bodyYaw = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset,
-                        livingentity.renderYawOffset);
+            if (shouldSit && entity.getVehicle() instanceof LivingEntity vehicle) {
+                bodyYaw = Mth.lerp(partialTicks, vehicle.yBodyRotO, vehicle.yBodyRot);
                 netHeadYaw = headYaw - bodyYaw;
-                float wrapped = MathHelper.wrapDegrees(netHeadYaw);
+                float wrapped = Mth.wrapDegrees(netHeadYaw);
                 if (wrapped < -getRotLimit()) {
                     wrapped = -getRotLimit();
                 }
@@ -68,9 +65,9 @@ public class HeadTrackingLayer<T extends LivingEntity & IBTAnimatedEntity<T>> ex
                 }
                 netHeadYaw = headYaw - bodyYaw;
             }
-            float headPitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+            float headPitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
             float rotateY = netHeadYaw * ((float) Math.PI / 180F);
-            boolean isFlying = entity.getTicksElytraFlying() > 4;
+            boolean isFlying = entity.getFallFlyingTicks() > 4;
             float rotateX;
             if (isFlying) {
                 rotateX = (-(float) Math.PI / 4F);

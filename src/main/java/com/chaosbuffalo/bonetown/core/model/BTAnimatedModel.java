@@ -7,9 +7,9 @@ import com.chaosbuffalo.bonetown.core.bonemf.BoneMFModelLoader;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFSkeleton;
 import com.chaosbuffalo.bonetown.init.BTMaterials;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.system.MemoryUtil;
 
@@ -28,9 +28,9 @@ public class BTAnimatedModel extends BTModel {
     private BakedAnimatedMesh[] animatedMeshes;
     private BakedAnimatedMesh combinedAnimatedMesh;
     private BoneMFArmorModel defaultArmor;
-    private final Map<IArmorMaterial, BoneMFArmorModel> armorOverrides;
+    private final Map<ArmorMaterial, BoneMFArmorModel> armorOverrides;
     private BakedArmorMeshes bakedDefaultArmor;
-    private final Map<IArmorMaterial, BakedArmorMeshes> bakedArmorOverrides;
+    private final Map<ArmorMaterial, BakedArmorMeshes> bakedArmorOverrides;
 
     public BTAnimatedModel(ResourceLocation name, ResourceLocation programName,
                            BoneTownConstants.MeshTypes meshType) {
@@ -46,10 +46,10 @@ public class BTAnimatedModel extends BTModel {
     }
 
     private BakedArmorMeshes bakeArmor(BoneMFArmorModel model){
-        BakedAnimatedMesh headArmor = model.getCombinedMeshForSlot(EquipmentSlotType.HEAD);
-        BakedAnimatedMesh chestArmor = model.getCombinedMeshForSlot(EquipmentSlotType.CHEST);
-        BakedAnimatedMesh legArmor = model.getCombinedMeshForSlot(EquipmentSlotType.LEGS);
-        BakedAnimatedMesh feetArmor = model.getCombinedMeshForSlot(EquipmentSlotType.FEET);
+        BakedAnimatedMesh headArmor = model.getCombinedMeshForSlot(EquipmentSlot.HEAD);
+        BakedAnimatedMesh chestArmor = model.getCombinedMeshForSlot(EquipmentSlot.CHEST);
+        BakedAnimatedMesh legArmor = model.getCombinedMeshForSlot(EquipmentSlot.LEGS);
+        BakedAnimatedMesh feetArmor = model.getCombinedMeshForSlot(EquipmentSlot.FEET);
         return new BakedArmorMeshes(model.getName(), headArmor, chestArmor, legArmor, feetArmor);
     }
 
@@ -57,7 +57,7 @@ public class BTAnimatedModel extends BTModel {
         if (hasDefaultArmor()){
             bakedDefaultArmor = bakeArmor(defaultArmor);
         }
-        for (IArmorMaterial mat : armorOverrides.keySet()){
+        for (ArmorMaterial mat : armorOverrides.keySet()){
             BoneMFArmorModel armorModel = armorOverrides.get(mat);
             BakedArmorMeshes baked = bakeArmor(armorModel);
             bakedArmorOverrides.put(mat, baked);
@@ -68,7 +68,7 @@ public class BTAnimatedModel extends BTModel {
         return this.defaultArmor != null;
     }
 
-    public Optional<BoneMFArmorModel> getArmorForMaterial(IArmorMaterial material){
+    public Optional<BoneMFArmorModel> getArmorForMaterial(ArmorMaterial material){
         if (armorOverrides.containsKey(material)){
             return Optional.of(armorOverrides.get(material));
         } else {
@@ -76,7 +76,7 @@ public class BTAnimatedModel extends BTModel {
         }
     }
 
-    public Optional<BakedArmorMeshes> getBakedArmorForMaterial(IArmorMaterial material){
+    public Optional<BakedArmorMeshes> getBakedArmorForMaterial(ArmorMaterial material){
         if (bakedArmorOverrides.containsKey(material)){
             return Optional.of(bakedArmorOverrides.get(material));
         } else {
@@ -84,7 +84,7 @@ public class BTAnimatedModel extends BTModel {
         }
     }
 
-    public void addArmorOverride(IArmorMaterial material, @Nonnull BoneMFArmorModel model){
+    public void addArmorOverride(ArmorMaterial material, @Nonnull BoneMFArmorModel model){
         armorOverrides.put(material, model);
     }
 

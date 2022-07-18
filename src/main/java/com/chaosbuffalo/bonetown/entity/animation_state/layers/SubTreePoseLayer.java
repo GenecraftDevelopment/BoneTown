@@ -3,11 +3,12 @@ package com.chaosbuffalo.bonetown.entity.animation_state.layers;
 import com.chaosbuffalo.bonetown.core.animation.*;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFSkeleton;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import net.minecraft.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.util.ResourceLocation;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4d;
 
 public class SubTreePoseLayer<T extends Entity & IBTAnimatedEntity<T>> extends LayerWithAnimation<T> {

@@ -1,7 +1,7 @@
 package com.chaosbuffalo.bonetown.core.materials;
 
-import net.minecraft.client.shader.ShaderLoader;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.shaders.Program;
+import net.minecraft.resources.ResourceLocation;
 
 public class AnimatedMaterialEntry extends BTMaterialEntry {
 
@@ -11,7 +11,7 @@ public class AnimatedMaterialEntry extends BTMaterialEntry {
     }
 
     @Override
-    public IBTMaterial getProgram(int programId, ShaderLoader vertex, ShaderLoader frag) {
+    public IBTMaterial getProgram(int programId, Program vertex, Program frag) {
         return new AnimatedMaterial(programId, vertex, frag);
     }
 }

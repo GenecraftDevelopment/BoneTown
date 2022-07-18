@@ -3,14 +3,14 @@ package com.chaosbuffalo.bonetown.core.materials;
 
 import com.chaosbuffalo.bonetown.core.animation.AnimationFrame;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
-import net.minecraft.client.shader.ShaderLoader;
+import com.mojang.blaze3d.shaders.Program;
 
 public class AnimatedMaterial extends BTMaterial {
 
     public MaterialUniform jointsUniform;
     public MaterialUniform inverseBindPoseUniform;
 
-    public AnimatedMaterial(int program, ShaderLoader vert, ShaderLoader frag) {
+    public AnimatedMaterial(int program, Program vert, Program frag) {
         super(program, vert, frag);
         jointsUniform = new MaterialUniform("joints_matrix",
                 MaterialUniform.UniformType.vecmat4x4, AnimationFrame.MAX_JOINTS, this);

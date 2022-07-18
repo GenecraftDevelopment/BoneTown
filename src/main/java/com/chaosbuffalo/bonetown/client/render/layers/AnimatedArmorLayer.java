@@ -7,17 +7,17 @@ import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.core.materials.IBTMaterial;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 
 import javax.annotation.Nullable;
@@ -33,48 +33,49 @@ public class AnimatedArmorLayer<T extends LivingEntity & IBTAnimatedEntity<T>> e
         this.model = model;
     }
 
+
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer renderBuffer, int packedLight, T entityIn,
+    public void render(PoseStack matrixStack, MultiBufferSource renderBuffer, int packedLight, T entityIn,
                        IPose pose, float partialTicks, float ageInTicks, IBTMaterial currentMaterial,
                        Matrix4f projectionMatrix) {
-        renderArmorPart(matrixStack, entityIn, EquipmentSlotType.LEGS, packedLight, partialTicks, currentMaterial,
+        renderArmorPart(matrixStack, entityIn, EquipmentSlot.LEGS, packedLight, partialTicks, currentMaterial,
                 projectionMatrix);
-        renderArmorPart(matrixStack, entityIn, EquipmentSlotType.FEET, packedLight, partialTicks, currentMaterial,
+        renderArmorPart(matrixStack, entityIn, EquipmentSlot.FEET, packedLight, partialTicks, currentMaterial,
                 projectionMatrix);
-        renderArmorPart(matrixStack, entityIn, EquipmentSlotType.CHEST, packedLight, partialTicks, currentMaterial,
+        renderArmorPart(matrixStack, entityIn, EquipmentSlot.CHEST, packedLight, partialTicks, currentMaterial,
                 projectionMatrix);
-        renderArmorPart(matrixStack, entityIn, EquipmentSlotType.HEAD, packedLight, partialTicks, currentMaterial,
+        renderArmorPart(matrixStack, entityIn, EquipmentSlot.HEAD, packedLight, partialTicks, currentMaterial,
                 projectionMatrix);
     }
 
-    private void renderArmorPart(MatrixStack matrixStack, T entityIn,
-                                 EquipmentSlotType slot, int packedLight, float partialTicks,
+    private void renderArmorPart(PoseStack matrixStack, T entityIn,
+                                 EquipmentSlot slot, int packedLight, float partialTicks,
                                  IBTMaterial material, Matrix4f projectionMatrix) {
-        ItemStack itemStack = entityIn.getItemStackFromSlot(slot);
+        ItemStack itemStack = entityIn.getItemBySlot(slot);
         if (itemStack.getItem() instanceof ArmorItem) {
             ArmorItem armorItem = (ArmorItem) itemStack.getItem();
-            model.getBakedArmorForMaterial(armorItem.getArmorMaterial()).ifPresent((meshes) -> {
-                matrixStack.push();
+            model.getBakedArmorForMaterial(armorItem.getMaterial()).ifPresent((meshes) -> {
+                matrixStack.pushPose();
                 BTArmorRenderData renderData = RenderDataManager.MANAGER.getArmorRenderDataForModel(meshes);
                 ResourceLocation armorResource = getArmorResource(entityIn, itemStack, slot, null);
-                RenderType renderType = RenderType.getEntityCutoutNoCull(armorResource);
-                int packedOverlay = LivingRenderer.getPackedOverlay(entityIn, partialTicks);
+                RenderType renderType = RenderType.entityCutoutNoCull(armorResource);
+                int packedOverlay = LivingEntityRenderer.getOverlayCoords(entityIn, partialTicks);
                 material.initRender(renderType, matrixStack, projectionMatrix, packedLight, packedOverlay);
                 if (!renderData.isInitialized()){
                     renderData.upload();
                 }
                 renderData.renderSlot(slot);
                 material.endRender(renderType);
-                matrixStack.pop();
+                matrixStack.popPose();
             });
         }
 
     }
 
-    public ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlotType slot,
+    public ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot,
                                              @Nullable String type) {
         ArmorItem item = (ArmorItem)stack.getItem();
-        String texture = item.getArmorMaterial().getName();
+        String texture = item.getMaterial().getName();
         String domain = "minecraft";
         int idx = texture.indexOf(58);
         if (idx != -1) {
@@ -82,7 +83,7 @@ public class AnimatedArmorLayer<T extends LivingEntity & IBTAnimatedEntity<T>> e
             texture = texture.substring(idx + 1);
         }
         String textureLoc = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture,
-                slot == EquipmentSlotType.LEGS ? 2 : 1, type == null ? "" : String.format("_%s", type));
+                slot == EquipmentSlot.LEGS ? 2 : 1, type == null ? "" : String.format("_%s", type));
         textureLoc = ForgeHooksClient.getArmorTexture(entity, stack, textureLoc, slot, type);
         ResourceLocation resourcelocation = ARMOR_TEXTURE_RES_MAP.get(textureLoc);
         if (resourcelocation == null) {

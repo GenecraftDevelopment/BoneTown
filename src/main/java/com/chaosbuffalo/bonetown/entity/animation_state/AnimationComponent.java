@@ -8,9 +8,17 @@ import com.chaosbuffalo.bonetown.entity.animation_state.messages.AnimationMessag
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.network.EntityAnimationClientUpdatePacket;
 import com.chaosbuffalo.bonetown.network.PacketHandler;
+import com.mojang.datafixers.types.templates.CompoundList;
+import com.mojang.math.Constants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -73,7 +81,7 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     }
 
     public void updateState(AnimationMessage message){
-        if (!getEntity().world.isRemote()){
+        if (getEntity().level.isClientSide()){
             syncQueue.add(message);
         }
         if (messageHandlers.containsKey(message.getType())){
@@ -188,8 +196,8 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
 
     public void update() {
         ticks++;
-        World world = getEntity().getEntityWorld();
-        if (!world.isRemote()){
+        Level world = getEntity().getLevel();
+        if (world.isClientSide){
             if (syncQueue.size() > 0){
                 EntityAnimationClientUpdatePacket packet = new EntityAnimationClientUpdatePacket(
                         getEntity(),
@@ -206,24 +214,26 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
         }
     }
 
+
+
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
-        ListNBT stack = new ListNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        ListTag stack = new ListTag();
         stateStack.forEach((stateName) -> {
-            stack.add(StringNBT.valueOf(stateName));
+            stack.add(StringTag.valueOf(stateName));
         });
         tag.put("stateStack", stack);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("stateStack")){
             stateStack.clear();
-            ListNBT stack = nbt.getList("stateStack", Constants.NBT.TAG_STRING);
+            ListTag stack = nbt.getList("stateStack", Tag.TAG_STRING);
             stack.forEach(tag -> {
-                String stateName = tag.getString();
+                String stateName = tag.getAsString();
                 stateStack.push(stateName);
             });
             pushState(stateStack.pop());

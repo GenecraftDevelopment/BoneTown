@@ -3,11 +3,9 @@ package com.chaosbuffalo.bonetown.entity.animation_state.layers;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import java.util.function.Consumer;
