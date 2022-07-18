@@ -8,24 +8,15 @@ import com.chaosbuffalo.bonetown.entity.animation_state.messages.AnimationMessag
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.network.EntityAnimationClientUpdatePacket;
 import com.chaosbuffalo.bonetown.network.PacketHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.PacketDistributor;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> implements INBTSerializable<CompoundNBT> {
+public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> implements INBTSerializable<CompoundTag> {
 
     private final T entity;
     private int ticks;

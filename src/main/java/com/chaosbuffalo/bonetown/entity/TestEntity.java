@@ -1,48 +1,50 @@
 package com.chaosbuffalo.bonetown.entity;
 
-import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.init.BTEntityTypes;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.network.NetworkHooks;
 
 public class TestEntity extends Entity {
 
-    public TestEntity(final EntityType<? extends TestEntity> entityType, final World world) {
+    public TestEntity(final EntityType<? extends TestEntity> entityType, final Level world) {
         super(entityType, world);
-        setBoundingBox(new AxisAlignedBB(-1D, -1D, -1.0D, 1.0D, 1.0D, 1.0D));
-        ignoreFrustumCheck = true;
+        setBoundingBox(new AABB(-1D, -1D, -1.0D, 1.0D, 1.0D, 1.0D));
+        //ignoreFrustumCheck = true;
     }
 
-    public TestEntity(World worldIn, double x, double y, double z){
+    public TestEntity(Level worldIn, double x, double y, double z){
         this(worldIn);
-        setPosition(x, y, z);
+        setPos(x, y, z);
     }
 
-    public TestEntity(final World world) {
-        this(BTEntityTypes.TEST_ENTITY.get(), world);
+    public TestEntity(final Level world) {
+        this(BTEntityTypes.TEST_ENTITY(), world);
     }
 
 
     @Override
-    protected void registerData() {
+    protected void defineSynchedData() {
 
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    protected void readAdditionalSaveData(CompoundTag p_20052_) {
+
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundTag p_20139_) {
+
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+
 }

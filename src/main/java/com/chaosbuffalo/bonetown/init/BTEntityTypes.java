@@ -3,16 +3,14 @@ package com.chaosbuffalo.bonetown.init;
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.entity.TestEntity;
 import com.chaosbuffalo.bonetown.entity.TestZombieEntity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class BTEntityTypes {
 
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = new DeferredRegister<>(ForgeRegistries.ENTITIES, BoneTown.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES
+            = new DeferredRegister<>(ForgeRegistries.ENTITIES, BoneTown.MODID);
 
     public static final String TEST_NAME = "test";
     public static final String TEST_ZOMBIE_NAME = "test_zombie";

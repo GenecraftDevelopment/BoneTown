@@ -1,12 +1,10 @@
 package com.chaosbuffalo.bonetown.entity;
 
 import com.chaosbuffalo.bonetown.BoneTown;
-import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.chaosbuffalo.bonetown.core.bonemf.BoneMFSkeleton;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationComponent;
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationState;
-import com.chaosbuffalo.bonetown.entity.animation_state.AnimationUtils;
 import com.chaosbuffalo.bonetown.entity.animation_state.layers.FullBodyPoseLayer;
 import com.chaosbuffalo.bonetown.entity.animation_state.layers.HeadTrackingLayer;
 import com.chaosbuffalo.bonetown.entity.animation_state.layers.LocomotionLayer;
@@ -15,19 +13,19 @@ import com.chaosbuffalo.bonetown.entity.animation_state.messages.PopStateMessage
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.PushStateMessage;
 import com.chaosbuffalo.bonetown.init.BTEntityTypes;
 import com.chaosbuffalo.bonetown.init.BTModels;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
-public class TestZombieEntity extends ZombieEntity implements IBTAnimatedEntity<TestZombieEntity>, IHasHandBones {
+public class TestZombieEntity extends Zombie
+        implements IBTAnimatedEntity<TestZombieEntity>, IHasHandBones {
 
     private AnimationComponent<TestZombieEntity> animationComponent;
     BTAnimatedModel animatedModel;
@@ -41,7 +39,7 @@ public class TestZombieEntity extends ZombieEntity implements IBTAnimatedEntity<
     private static final ResourceLocation BACKFLIP_ANIM = new ResourceLocation(
             BoneTown.MODID, "biped.backflip");
 
-    public TestZombieEntity(final EntityType<? extends TestZombieEntity> type, final World worldIn) {
+    public TestZombieEntity(final EntityType<? extends TestZombieEntity> type, final Level worldIn) {
         super(type, worldIn);
         animatedModel = (BTAnimatedModel) BTModels.BIPED;
         skeleton = animatedModel.getSkeleton().orElse(null);
@@ -51,12 +49,12 @@ public class TestZombieEntity extends ZombieEntity implements IBTAnimatedEntity<
 
 
     @Override
-    public ActionResultType applyPlayerInteraction(PlayerEntity player, Vec3d vec, Hand hand) {
-        if (!getEntityWorld().isRemote() && hand.equals(player.getActiveHand())){
+    public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand) {
+        if (getLevel().isClientSide && hand.equals(player.getUsedItemHand())){
             animationComponent.updateState(new PushStateMessage("flip"));
-            setNoAI(true);
+            setNoAi(true);
         }
-        return super.applyPlayerInteraction(player, vec, hand);
+        return super.interactAt(player, vec, hand);
     }
 
     protected void setupAnimationComponent() {
@@ -87,9 +85,9 @@ public class TestZombieEntity extends ZombieEntity implements IBTAnimatedEntity<
         animationComponent.addAnimationState(flipState);
     }
 
-    public TestZombieEntity(World worldIn, double x, double y, double z){
+    public TestZombieEntity(Level worldIn, double x, double y, double z){
         this(worldIn);
-        setPosition(x, y, z);
+        setPos(x, y, z);
     }
 
     @Override
@@ -98,7 +96,7 @@ public class TestZombieEntity extends ZombieEntity implements IBTAnimatedEntity<
         animationComponent.update();
     }
 
-    public TestZombieEntity(final World world) {
+    public TestZombieEntity(final Level world) {
         this(BTEntityTypes.TEST_ZOMBIE.get(), world);
     }
 
