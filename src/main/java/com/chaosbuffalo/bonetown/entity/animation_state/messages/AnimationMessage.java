@@ -1,11 +1,11 @@
 package com.chaosbuffalo.bonetown.entity.animation_state.messages;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public abstract class AnimationMessage {
 
-    public void toPacketBuffer(PacketBuffer buffer){
-        buffer.writeString(getType());
+    public void toPacketBuffer(FriendlyByteBuf buffer){
+        buffer.writeUtf(getType());
     }
 
     private String type;

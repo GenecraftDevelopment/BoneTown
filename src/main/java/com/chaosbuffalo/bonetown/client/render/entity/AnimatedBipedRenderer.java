@@ -4,10 +4,7 @@ import com.chaosbuffalo.bonetown.client.render.layers.AnimatedHeldItemLayer;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
 import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.IHasHandBones;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.entity.LivingEntity;
 
 public abstract class AnimatedBipedRenderer<T extends LivingEntity & IBTAnimatedEntity<T> & IHasHandBones> extends

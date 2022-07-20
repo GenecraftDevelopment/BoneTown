@@ -10,14 +10,15 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
+}
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'com.github.johnrengelman.shadow'
 
 version = '0.1'
 group = 'com.chaosbuffalo.bonetown' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -27,13 +28,21 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 repositories {
     maven { url = 'https://files.minecraftforge.net/maven' }
-    jcenter()
     mavenCentral()
 }
 
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
 
 configurations {
-    // configuration that holds jars to embed inside the jar
     embed
     compile.extendsFrom embed
 }
@@ -103,8 +112,8 @@ minecraft {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.25'
-    shadow group: 'org.joml', name: 'joml', version: '1.9.22'
-    shadow group: 'com.upokecenter', name: 'cbor', version: '4.1.0'
+    library group: 'org.joml', name: 'joml', version: '1.9.22'
+    library group: 'com.upokecenter', name: 'cbor', version: '4.1.0'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -120,21 +129,23 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         ])
     }
+
 }
 
 shadowJar {
     project.configurations.shadow.setTransitive(true);
     configurations = [project.configurations.shadow]
 
-    classifier '' // Replace the default JAR
-
+    classifier ''
     relocate "org.joml", "com.chaosbuffalo.bonetown.repack.org.joml"
     relocate "com.upokecenter", "com.chaosbuffalo.bonetown.repack.com.upokecenter"
 
+    finalizedBy 'reobfShadowJar'
 }
+assemble.dependsOn shadowJar
 
 reobf {
-    shadowJar {} // Reobfuscate the shadowed JAR
+    shadowJar {}
 }
 
 

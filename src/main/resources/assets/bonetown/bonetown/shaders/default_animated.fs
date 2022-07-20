@@ -15,14 +15,12 @@ uniform vec3 diffuse_colors[2];
 uniform vec3 diffuse_locs[2];
 
 
-
 float getDiffuseCos(vec3 lightPos, vec3 vert, vec3 norm) {
     vec3 to_light = normalize(lightPos);
     vec3 vertex_normal = normalize(norm);
     float cos_angle = dot(vertex_normal, to_light);
     return clamp(cos_angle, 0.0, 1.0);
 }
-
 
 void main()
 {

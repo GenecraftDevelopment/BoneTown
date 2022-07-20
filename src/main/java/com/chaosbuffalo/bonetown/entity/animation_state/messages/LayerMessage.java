@@ -3,7 +3,8 @@ package com.chaosbuffalo.bonetown.entity.animation_state.messages;
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationComponent;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
-import net.minecraft.network.PacketBuffer;
+import jdk.jfr.Frequency;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class LayerMessage extends LayerControlMessage {
 
@@ -32,14 +33,14 @@ public class LayerMessage extends LayerControlMessage {
     }
 
     @Override
-    public void toPacketBuffer(PacketBuffer buffer) {
+    public void toPacketBuffer(FriendlyByteBuf buffer) {
         super.toPacketBuffer(buffer);
         message.toPacketBuffer(buffer);
     }
 
-    private static LayerMessage fromPacketBuffer(PacketBuffer buffer){
-        String stateName = buffer.readString();
-        String layerName = buffer.readString();
+    private static LayerMessage fromPacketBuffer(FriendlyByteBuf buffer){
+        String stateName = buffer.readUtf();
+        String layerName = buffer.readUtf();
         AnimationLayerMessage msg = NetworkDeserializers.layerMessageDeserializer.deserialize(buffer);
         return new LayerMessage(stateName, layerName, msg);
     }

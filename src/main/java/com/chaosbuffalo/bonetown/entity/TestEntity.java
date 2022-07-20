@@ -23,7 +23,7 @@ public class TestEntity extends Entity {
     }
 
     public TestEntity(final Level world) {
-        this(BTEntityTypes.TEST_ENTITY(), world);
+        this(BTEntityTypes.TEST_ENTITY.get(), world);
     }
 
 

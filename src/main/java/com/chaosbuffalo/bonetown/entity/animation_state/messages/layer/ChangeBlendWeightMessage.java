@@ -1,7 +1,7 @@
 package com.chaosbuffalo.bonetown.entity.animation_state.messages.layer;
 
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class ChangeBlendWeightMessage extends AnimationLayerMessage {
     public static String CHANGE_BLEND_WEIGHT_TYPE = "CHANGE_BLEND_WEIGHT_TYPE";
@@ -13,7 +13,7 @@ public class ChangeBlendWeightMessage extends AnimationLayerMessage {
     }
 
     @Override
-    public void toPacketBuffer(PacketBuffer buffer){
+    public void toPacketBuffer(FriendlyByteBuf buffer){
         super.toPacketBuffer(buffer);
         buffer.writeFloat(blendWeight);
     }
@@ -27,7 +27,7 @@ public class ChangeBlendWeightMessage extends AnimationLayerMessage {
         return blendWeight;
     }
 
-    private static ChangeBlendWeightMessage fromPacketBuffer(PacketBuffer buffer){
+    private static ChangeBlendWeightMessage fromPacketBuffer(FriendlyByteBuf buffer){
         float blendWeight = buffer.readFloat();
         return new ChangeBlendWeightMessage(blendWeight);
     }

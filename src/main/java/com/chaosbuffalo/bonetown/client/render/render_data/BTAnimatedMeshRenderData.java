@@ -2,7 +2,7 @@ package com.chaosbuffalo.bonetown.client.render.render_data;
 
 import com.chaosbuffalo.bonetown.core.model.BakedAnimatedMesh;
 import com.chaosbuffalo.bonetown.client.render.platform.GlStateManagerExtended;
-import net.minecraft.client.renderer.GLAllocation;
+import com.mojang.blaze3d.platform.MemoryTracker;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,25 +29,24 @@ public class BTAnimatedMeshRenderData extends BTMeshRenderData {
     @Override
     public void uploadBuffers() {
         super.uploadBuffers();
-
         // weights
         int vboId = genVBO();
-        ByteBuffer weightsByteBuffer = GLAllocation.createDirectByteBuffer(animatedMesh.weights.length * 4);
+        ByteBuffer weightsByteBuffer = MemoryTracker.create(animatedMesh.weights.length * 4);
         FloatBuffer weightsBuffer = weightsByteBuffer.asFloatBuffer();
         weightsBuffer.put(animatedMesh.weights).flip();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ARRAY_BUFFER, weightsByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, weightsByteBuffer, GL_STATIC_DRAW);
         GlStateManagerExtended.enableVertexAttribArray(3);
-        GlStateManagerExtended.vertexAttribPointer(3, MAX_WEIGHTS, GL_FLOAT, false, 0, 0);
+        GlStateManagerExtended._vertexAttribPointer(3, MAX_WEIGHTS, GL_FLOAT, false, 0, 0);
 
         // bone ids
         vboId = genVBO();
-        ByteBuffer boneIdsByteBuffer = GLAllocation.createDirectByteBuffer(animatedMesh.boneIds.length * 4);
+        ByteBuffer boneIdsByteBuffer = MemoryTracker.create(animatedMesh.boneIds.length * 4);
         IntBuffer boneIdsBuffer = boneIdsByteBuffer.asIntBuffer();
         boneIdsBuffer.put(animatedMesh.boneIds).flip();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ARRAY_BUFFER, boneIdsByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, boneIdsByteBuffer, GL_STATIC_DRAW);
         GlStateManagerExtended.enableVertexAttribArray(4);
-        GlStateManagerExtended.vertexAttribPointer(4, MAX_WEIGHTS, GL_FLOAT, false, 0, 0);
+        GlStateManagerExtended._vertexAttribPointer(4, MAX_WEIGHTS, GL_FLOAT, false, 0, 0);
     }
 }

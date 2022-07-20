@@ -10,9 +10,10 @@ import com.chaosbuffalo.bonetown.core.proxy.ServerProxy;
 import com.chaosbuffalo.bonetown.init.BTEntityTypes;
 import com.chaosbuffalo.bonetown.init.BTRenderers;
 import com.chaosbuffalo.bonetown.network.PacketHandler;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,8 @@ public class BoneTown
         proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
         proxy.registerHandlers();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::entitySetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::rendererSetup);
         BTEntityTypes.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
@@ -49,7 +51,11 @@ public class BoneTown
         });
     }
 
-    private void clientSetup(final FMLClientSetupEvent event) {
-        BTRenderers.registerRenderers();
+    private void rendererSetup(final EntityRenderersEvent.RegisterRenderers event) {
+        BTRenderers.registerRenderers(event);
+    }
+
+    private void entitySetup(final EntityAttributeCreationEvent event) {
+        BTEntityTypes.registerAttributes(event);
     }
 }

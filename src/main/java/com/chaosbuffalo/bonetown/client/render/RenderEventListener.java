@@ -3,9 +3,11 @@ package com.chaosbuffalo.bonetown.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,7 +29,7 @@ public class RenderEventListener {
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void renderLast(RenderWorldLastEvent event){
+    public static void renderLast(TickEvent.RenderTickEvent event){
         RenderDataManager.MANAGER.tick();
     }
 }

@@ -2,14 +2,14 @@ package com.chaosbuffalo.bonetown.entity.animation_state;
 
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 
 public class AnimationUtils {
 
 
-    public static AxisAlignedBB GetBBoxForPose(IPose pose){
+    public static AABB GetBBoxForPose(IPose pose){
         double highestX = 0.0;
         double lowestX = 0.0;
         double highestY = 0.0;
@@ -36,7 +36,7 @@ public class AnimationUtils {
                 lowestZ = workPos.z();
             }
         }
-        AxisAlignedBB result = new AxisAlignedBB(lowestX, lowestY, lowestZ, highestX, highestY, highestZ);
+        AABB result = new AABB(lowestX, lowestY, lowestZ, highestX, highestY, highestZ);
         return result;
     }
 

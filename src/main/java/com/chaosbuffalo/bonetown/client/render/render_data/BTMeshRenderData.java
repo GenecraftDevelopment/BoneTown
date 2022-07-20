@@ -2,7 +2,7 @@ package com.chaosbuffalo.bonetown.client.render.render_data;
 
 import com.chaosbuffalo.bonetown.core.model.BakedMesh;
 import com.chaosbuffalo.bonetown.client.render.platform.GlStateManagerExtended;
-import net.minecraft.client.renderer.GLAllocation;
+import com.mojang.blaze3d.platform.MemoryTracker;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -38,47 +38,48 @@ public class BTMeshRenderData implements IBTRenderData {
     public void uploadBuffers() {
         int vboId = genVBO();
 
+
         // Position Data
-        ByteBuffer posByteBuffer = GLAllocation.createDirectByteBuffer(mesh.positions.length * 4);
+        ByteBuffer posByteBuffer = MemoryTracker.create(mesh.positions.length * 4);
         FloatBuffer posBuffer = posByteBuffer.asFloatBuffer();
         posBuffer.put(mesh.positions).flip();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ARRAY_BUFFER, posByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, posByteBuffer, GL_STATIC_DRAW);
         GlStateManagerExtended.enableVertexAttribArray(0);
-        GlStateManagerExtended.vertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        GlStateManagerExtended._vertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
         // UV Data
         vboId = genVBO();
-        ByteBuffer textCoordsByteBuffer = GLAllocation.createDirectByteBuffer(mesh.texCoords.length * 4);
+        ByteBuffer textCoordsByteBuffer = MemoryTracker.create(mesh.texCoords.length * 4);
         FloatBuffer textCoordsBuffer = textCoordsByteBuffer.asFloatBuffer();
         textCoordsBuffer.put(mesh.texCoords).flip();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ARRAY_BUFFER, textCoordsByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, textCoordsByteBuffer, GL_STATIC_DRAW);
         GlStateManagerExtended.enableVertexAttribArray(1);
-        GlStateManagerExtended.vertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        GlStateManagerExtended._vertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
         // Normal Data
         vboId = genVBO();
-        ByteBuffer vecNormalsByteBuffer = GLAllocation.createDirectByteBuffer(mesh.normals.length * 4);
+        ByteBuffer vecNormalsByteBuffer =MemoryTracker.create(mesh.normals.length * 4);
         FloatBuffer vecNormalsBuffer = vecNormalsByteBuffer.asFloatBuffer();
         vecNormalsBuffer.put(mesh.normals).flip();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ARRAY_BUFFER, vecNormalsByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, vecNormalsByteBuffer, GL_STATIC_DRAW);
         GlStateManagerExtended.enableVertexAttribArray(2);
-        GlStateManagerExtended.vertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+        GlStateManagerExtended._vertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
 
         // Indices Data
         vboId = genVBO();
-        ByteBuffer indicesByteBuffer = GLAllocation.createDirectByteBuffer(mesh.indices.length * 4);
+        ByteBuffer indicesByteBuffer = MemoryTracker.create(mesh.indices.length * 4);
         IntBuffer indicesBuffer = indicesByteBuffer.asIntBuffer();
         indicesBuffer.put(mesh.indices).flip();
-        GlStateManagerExtended.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended.bufferData(GL_ELEMENT_ARRAY_BUFFER, indicesByteBuffer, GL_STATIC_DRAW);
+        GlStateManagerExtended._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
+        GlStateManagerExtended._glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesByteBuffer, GL_STATIC_DRAW);
     }
 
     protected int genVBO(){
-        int vbo = GlStateManagerExtended.genBuffers();
+        int vbo = GlStateManagerExtended._glGenBuffers();
         vboIdList.add(vbo);
         return vbo;
     }
@@ -104,9 +105,9 @@ public class BTMeshRenderData implements IBTRenderData {
         GlStateManagerExtended.disableVertexAttribArray(0);
 
         // Delete the VBOs
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, 0);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, 0);
         for (int vboId : vboIdList) {
-            GlStateManagerExtended.deleteBuffers(vboId);
+            GlStateManagerExtended._glDeleteBuffers(vboId);
         }
 
         // Delete the VAO
@@ -119,7 +120,7 @@ public class BTMeshRenderData implements IBTRenderData {
         vaoId = GlStateManagerExtended.genVertexArrays();
         GlStateManagerExtended.bindVertexArray(vaoId);
         uploadBuffers();
-        GlStateManagerExtended.bindBuffer(GL_ARRAY_BUFFER, 0);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, 0);
         GlStateManagerExtended.bindVertexArray(0);
     }
 }

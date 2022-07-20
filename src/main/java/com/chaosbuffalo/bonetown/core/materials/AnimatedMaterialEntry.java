@@ -11,7 +11,7 @@ public class AnimatedMaterialEntry extends BTMaterialEntry {
     }
 
     @Override
-    public IBTMaterial getProgram(int programId, Program vertex, Program frag) {
+    public IBTMaterial getMaterial(int programId, Program vertex, Program frag) {
         return new AnimatedMaterial(programId, vertex, frag);
     }
 }

@@ -2,27 +2,22 @@ package com.chaosbuffalo.bonetown.core.materials;
 
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.BoneTownRegistry;
-import com.google.common.collect.Sets;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.blaze3d.shaders.ProgramManager;
 import com.mojang.logging.LogUtils;
-import net.minecraft.FileUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
 
 
 @OnlyIn(Dist.CLIENT)
@@ -31,18 +26,19 @@ public class MaterialResourceManager implements ResourceManagerReloadListener {
     static final Logger LOGGER = LogUtils.getLogger();
     public static final MaterialResourceManager INSTANCE = new MaterialResourceManager();
 
-    private ResourceManager manager;
+    private ResourceManager manager = Minecraft.getInstance().getResourceManager();
     private HashMap<ResourceLocation, IBTMaterial> programCache = new HashMap<>();
 
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
-        for (BTMaterialEntry entry : BoneTownRegistry.MATERIAL_REGISTRY.getValues()){
-            loadProgram(entry);
+        for (BTMaterialEntry entry : BoneTownRegistry.MATERIAL_REGISTRY.getValues()) {
+            loadMaterial(entry);
         }
+        this.manager = resourceManager;
     }
 
-    private void clearProgramCache(){
+    private void clearProgramCache() {
         programCache.values().forEach(ProgramManager::releaseProgram);
         programCache.clear();
     }
@@ -53,72 +49,46 @@ public class MaterialResourceManager implements ResourceManagerReloadListener {
     }
 
 
-    public IBTMaterial getShaderProgram(ResourceLocation location){
+    public IBTMaterial getShaderProgram(ResourceLocation location) {
         return programCache.get(location);
     }
 
 
-    private void loadProgram(BTMaterialEntry program){
+    private void loadMaterial(BTMaterialEntry program) {
         try {
-            final var vert = createShader(manager, program.getVertexShader(), Program.Type.VERTEX);
-            final var frag = createShader(manager, program.getFragShader(), Program.Type.FRAGMENT);
-            int progId = ProgramManager.createProgram();
-            IBTMaterial prog = program.getProgram(progId, vert, frag);
-            ProgramManager.linkShader(prog);
-            prog.setupUniforms();
-            programCache.put(program.getRegistryName(), prog);
+            final var vert = createShaderProgram(manager, program.getVertexShader(), Program.Type.VERTEX);
+            final var frag = createShaderProgram(manager, program.getFragShader(), Program.Type.FRAGMENT);
+
+            final int btProgramID = ProgramManager.createProgram();
+            final var btProgram = program.getMaterial(btProgramID, vert, frag);
+
+            ProgramManager.linkShader(btProgram);
+            btProgram.setupUniforms();
+            programCache.put(program.getRegistryName(), btProgram);
         } catch (IOException ex) {
             BoneTown.LOGGER.error("Failed to load program {}",
                     program.getRegistryName().toString(), ex);
         }
     }
 
-    private static Program createShader(final ResourceManager manager, ResourceLocation location,
-                                             Program.Type shaderType) throws IOException {
-
-        final var fullResourcePath= FileUtil.getFullResourcePath("shaders/core/" + location.getPath() + shaderType.getExtension());
-
+    private static Program createShaderProgram(final ResourceManager manager, ResourceLocation location,
+                                               Program.Type shaderType) throws IOException {
         BoneTown.LOGGER.info("Trying to create shader: {}", location.toString());
-        try (InputStream is = new BufferedInputStream(manager.getResource(location).getInputStream())) {
-            return Program.compileShader(shaderType, location.toString(), is, location.toString(), new GlslPreprocessor() {
-                private final Set<String> importedPaths = Sets.newHashSet();
-                public String applyImport(boolean p_173374_, @NotNull String path) {
-                    path = FileUtil.normalizeResourcePath((p_173374_ ? fullResourcePath : "shaders/include/") + path);
-                    if (!this.importedPaths.add(path)) {
-                        return null;
-                    } else {
-                        final var resourcelocation1 = new ResourceLocation(path);
 
-                        try {
-                            Resource resource1 = manager.getResource(resourcelocation1);
-
-                            String s2;
-                            try {
-                                s2 = IOUtils.toString(resource1.getInputStream(), StandardCharsets.UTF_8);
-                            } catch (Throwable throwable1) {
-                                if (resource1 != null) {
-                                    try {
-                                        resource1.close();
-                                    } catch (Throwable throwable) {
-                                        throwable1.addSuppressed(throwable);
-                                    }
-                                }
-
-                                throw throwable1;
-                            }
-
-                            if (resource1 != null) {
-                                resource1.close();
-                            }
-
-                            return s2;
-                        } catch (IOException ioexception) {
-                            LOGGER.error("Could not open GLSL import {}: {}", path, ioexception.getMessage());
-                            return "#error " + ioexception.getMessage();
+        try (var resource = manager.getResource(location)) {
+            return Program.compileShader(
+                    shaderType,
+                    location.toString(),
+                    resource.getInputStream(),
+                    location.toString(),
+                    new GlslPreprocessor() {
+                        @Nullable
+                        @Override
+                        public String applyImport(boolean p_166480_, @NotNull String path) {
+                            return null;
                         }
                     }
-                }
-            });
+            );
         }
     }
 

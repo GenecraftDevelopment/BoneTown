@@ -6,10 +6,10 @@ import com.chaosbuffalo.bonetown.entity.IBTAnimatedEntity;
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationComponent;
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.AnimationMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +21,11 @@ public class EntityAnimationClientUpdatePacket {
     private List<AnimationMessage> messages;
 
     public EntityAnimationClientUpdatePacket(Entity entity, List<AnimationMessage> messages){
-        entityId = entity.getEntityId();
+        entityId = entity.getId();
         this.messages = messages;
     }
 
-    public EntityAnimationClientUpdatePacket(PacketBuffer buffer){
+    public EntityAnimationClientUpdatePacket(FriendlyByteBuf buffer){
         entityId = buffer.readInt();
         int count = buffer.readInt();
         messages = new ArrayList<>();
@@ -40,7 +40,7 @@ public class EntityAnimationClientUpdatePacket {
         }
     }
 
-    public void toBytes(PacketBuffer buffer){
+    public void toBytes(FriendlyByteBuf buffer){
         buffer.writeInt(entityId);
         buffer.writeInt(messages.size());
         for (AnimationMessage message : messages){
@@ -51,11 +51,11 @@ public class EntityAnimationClientUpdatePacket {
     public void handle(Supplier<NetworkEvent.Context> supplier){
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            World world = Minecraft.getInstance().world;
+            Level world = Minecraft.getInstance().level;
             if (world == null) {
                 return;
             }
-            Entity entity = world.getEntityByID(entityId);
+            Entity entity = world.getEntity(entityId);
             if (entity instanceof IBTAnimatedEntity){
                 AnimationComponent<?> component = ((IBTAnimatedEntity<?>) entity).getAnimationComponent();
                 for (AnimationMessage message : messages){

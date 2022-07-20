@@ -76,10 +76,9 @@ public class TestZombieEntity extends Zombie
                 this, false);
         flipState.addLayer(flipLayer);
         flipLayer.setEndCallback(() -> {
-            World world = getEntityWorld();
-            if (!world.isRemote()){
+            if (level.isClientSide){
                 animationComponent.updateState(new PopStateMessage());
-                setNoAI(false);
+                setNoAi(false);
             }
         });
         animationComponent.addAnimationState(flipState);

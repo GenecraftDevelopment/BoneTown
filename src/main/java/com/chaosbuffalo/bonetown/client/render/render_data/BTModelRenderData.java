@@ -1,9 +1,7 @@
 package com.chaosbuffalo.bonetown.client.render.render_data;
 
-import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.model.BakedMesh;
 import com.chaosbuffalo.bonetown.core.model.BTModel;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

@@ -4,7 +4,6 @@ import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.core.materials.AnimatedMaterialEntry;
 import com.chaosbuffalo.bonetown.core.materials.BTMaterialEntry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -2,7 +2,6 @@ package com.chaosbuffalo.bonetown.client.render.render_data;
 
 import com.chaosbuffalo.bonetown.core.model.BakedAnimatedMesh;
 import com.chaosbuffalo.bonetown.core.model.BTAnimatedModel;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 
 import java.util.HashMap;
 import java.util.Map;

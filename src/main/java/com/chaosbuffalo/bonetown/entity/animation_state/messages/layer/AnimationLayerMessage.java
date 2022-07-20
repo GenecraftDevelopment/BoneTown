@@ -1,7 +1,7 @@
 package com.chaosbuffalo.bonetown.entity.animation_state.messages.layer;
 
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public abstract class AnimationLayerMessage {
     private String messageType;
@@ -14,8 +14,8 @@ public abstract class AnimationLayerMessage {
         this.messageType = messageType;
     }
 
-    public void toPacketBuffer(PacketBuffer buffer) {
-        buffer.writeString(messageType);
+    public void toPacketBuffer(FriendlyByteBuf buffer) {
+        buffer.writeUtf(messageType);
     }
 
 

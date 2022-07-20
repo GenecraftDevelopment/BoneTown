@@ -32,7 +32,7 @@ public class BTMaterialEntry implements IForgeRegistryEntry<BTMaterialEntry> {
         return this;
     }
 
-    public IBTMaterial getProgram(int programId, Program vertex, Program frag){
+    public IBTMaterial getMaterial(int programId, Program vertex, Program frag){
         return new BTMaterial(programId, vertex, frag);
     }
 

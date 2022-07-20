@@ -3,12 +3,14 @@ package com.chaosbuffalo.bonetown.core.materials;
 import com.chaosbuffalo.bonetown.BoneTown;
 import com.chaosbuffalo.bonetown.client.render.GlobalRenderInfo;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.blaze3d.shaders.ProgramManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.RenderType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +123,8 @@ public class BTMaterial implements IBTMaterial {
 
     @Override
     public void attachToProgram() {
-
+        vert.attachToShader(this);
+        frag.attachToShader(this);
     }
 
     public void useProgram(){
@@ -165,14 +168,13 @@ public class BTMaterial implements IBTMaterial {
 
     }
 
-
     @Override
-    public Program getVertexProgram() {
+    public @NotNull Program getVertexProgram() {
         return vert;
     }
 
     @Override
-    public Program getFragmentProgram() {
+    public @NotNull Program getFragmentProgram() {
         return frag;
     }
 }

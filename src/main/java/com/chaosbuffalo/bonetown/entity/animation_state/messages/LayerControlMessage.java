@@ -3,7 +3,7 @@ package com.chaosbuffalo.bonetown.entity.animation_state.messages;
 
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationComponent;
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class LayerControlMessage extends AnimationMessage {
     private String stateName;
@@ -46,21 +46,21 @@ public class LayerControlMessage extends AnimationMessage {
     }
 
     @Override
-    public void toPacketBuffer(PacketBuffer buffer) {
+    public void toPacketBuffer(FriendlyByteBuf buffer) {
         super.toPacketBuffer(buffer);
-        buffer.writeString(getStateName());
-        buffer.writeString(getLayerName());
+        buffer.writeUtf(getStateName());
+        buffer.writeUtf(getLayerName());
     }
 
-    private static LayerControlMessage fromPacketBufferStart(PacketBuffer buffer){
-        String stateName = buffer.readString();
-        String layerName = buffer.readString();
+    private static LayerControlMessage fromPacketBufferStart(FriendlyByteBuf buffer){
+        String stateName = buffer.readUtf();
+        String layerName = buffer.readUtf();
         return getStartMessage(stateName, layerName);
     }
 
-    private static LayerControlMessage fromPacketBufferStop(PacketBuffer buffer){
-        String stateName = buffer.readString();
-        String layerName = buffer.readString();
+    private static LayerControlMessage fromPacketBufferStop(FriendlyByteBuf buffer){
+        String stateName = buffer.readUtf();
+        String layerName = buffer.readUtf();
         return getStopMessage(stateName, layerName);
     }
 

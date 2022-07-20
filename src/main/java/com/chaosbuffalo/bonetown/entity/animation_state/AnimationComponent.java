@@ -197,7 +197,7 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     public void update() {
         ticks++;
         Level world = getEntity().getLevel();
-        if (world.isClientSide){
+        if (!world.isClientSide){
             if (syncQueue.size() > 0){
                 EntityAnimationClientUpdatePacket packet = new EntityAnimationClientUpdatePacket(
                         getEntity(),

@@ -2,7 +2,8 @@ package com.chaosbuffalo.bonetown.entity.animation_state.messages;
 
 import com.chaosbuffalo.bonetown.entity.animation_state.AnimationComponent;
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
-import net.minecraft.network.PacketBuffer;
+import jdk.jfr.Frequency;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class PushStateMessage extends AnimationMessage {
     private String stateName;
@@ -20,15 +21,15 @@ public class PushStateMessage extends AnimationMessage {
         }
     }
 
-    private static PushStateMessage fromPacketBuffer(PacketBuffer buffer){
-        String stateName = buffer.readString();
+    private static PushStateMessage fromPacketBuffer(FriendlyByteBuf buffer){
+        String stateName = buffer.readUtf();
         return new PushStateMessage(stateName);
     }
 
     @Override
-    public void toPacketBuffer(PacketBuffer buffer) {
+    public void toPacketBuffer(FriendlyByteBuf buffer) {
         super.toPacketBuffer(buffer);
-        buffer.writeString(getStateName());
+        buffer.writeUtf(getStateName());
     }
 
     public PushStateMessage(String stateName) {

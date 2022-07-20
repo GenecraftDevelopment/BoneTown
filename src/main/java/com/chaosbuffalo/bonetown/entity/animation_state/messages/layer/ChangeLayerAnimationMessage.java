@@ -2,6 +2,7 @@ package com.chaosbuffalo.bonetown.entity.animation_state.messages.layer;
 
 import com.chaosbuffalo.bonetown.entity.animation_state.layers.LayerWithAnimation;
 import com.chaosbuffalo.bonetown.network.NetworkDeserializers;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public class ChangeLayerAnimationMessage extends AnimationLayerMessage {
@@ -15,14 +16,14 @@ public class ChangeLayerAnimationMessage extends AnimationLayerMessage {
     }
 
     @Override
-    public void toPacketBuffer(PacketBuffer buffer){
+    public void toPacketBuffer(FriendlyByteBuf buffer){
         super.toPacketBuffer(buffer);
-        buffer.writeString(getSlot());
+        buffer.writeUtf(getSlot());
         buffer.writeResourceLocation(getAnim());
     }
 
-    private static ChangeLayerAnimationMessage fromPacketBuffer(PacketBuffer buffer){
-        String slot = buffer.readString();
+    private static ChangeLayerAnimationMessage fromPacketBuffer(FriendlyByteBuf buffer){
+        String slot = buffer.readUtf();
         ResourceLocation animName = buffer.readResourceLocation();
         return new ChangeLayerAnimationMessage(animName, slot);
     }
