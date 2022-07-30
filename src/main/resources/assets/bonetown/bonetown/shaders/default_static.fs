@@ -39,5 +39,6 @@ void main()
     vec3 lit = combined * vec3(lightmap) * vec3(texColor);
     vec3 overlayed = vec3(overlay) * lit;
 
-    fragColor = vec4(overlayed, texColor.w);
+    //fragColor = vec4(overlayed, texColor.w);
+    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }

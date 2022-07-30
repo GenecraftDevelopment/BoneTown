@@ -17,6 +17,7 @@ import java.util.Arrays;
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(BoneTown.MODID)
 public class BTModels {
+
     @ObjectHolder("test_cube")
     public static BTModel TEST_CUBE;
 
@@ -38,23 +39,31 @@ public class BTModels {
     @SuppressWarnings("unused")
     @SubscribeEvent
     public static void registerArmorModels(RegistryEvent.Register<BTArmorModelEntry> event) {
-        ArrayList<String> legs = new ArrayList<>();
-        legs.add("biped_lower_armor_body");
-        legs.add("biped_lower_armor_leg_upper_l");
-        legs.add("biped_lower_armor_leg_upper_r");
-        legs.add("biped_lower_armor_leg_lower_l");
-        legs.add("biped_lower_armor_leg_lower_r");
-        ArrayList<String> body = new ArrayList<>();
-        body.add("biped_upper_armor_body");
-        body.add("biped_upper_armor_arm_upper_l");
-        body.add("biped_upper_armor_arm_upper_r");
-        body.add("biped_upper_armor_arm_lower_l");
-        body.add("biped_upper_armor_arm_lower_r");
-        ArrayList<String> head = new ArrayList<>();
-        head.add("biped_upper_armor_head");
-        ArrayList<String> feet = new ArrayList<>();
-        feet.add("biped_upper_armor_leg_lower_r");
-        feet.add("biped_upper_armor_leg_lower_l");
+        ArrayList<String> legs = new ArrayList<>(5);
+        {
+            legs.add("biped_lower_armor_body");
+            legs.add("biped_lower_armor_leg_upper_l");
+            legs.add("biped_lower_armor_leg_upper_r");
+            legs.add("biped_lower_armor_leg_lower_l");
+            legs.add("biped_lower_armor_leg_lower_r");
+        }
+        ArrayList<String> body = new ArrayList<>(5);
+        {
+            body.add("biped_upper_armor_body");
+            body.add("biped_upper_armor_arm_upper_l");
+            body.add("biped_upper_armor_arm_upper_r");
+            body.add("biped_upper_armor_arm_lower_l");
+            body.add("biped_upper_armor_arm_lower_r");
+        }
+        ArrayList<String> head = new ArrayList<>(1);
+        {
+            head.add("biped_upper_armor_head");
+        }
+        ArrayList<String> feet = new ArrayList<>(2);
+        {
+            feet.add("biped_upper_armor_leg_lower_r");
+            feet.add("biped_upper_armor_leg_lower_l");
+        }
         event.getRegistry().register(new BTArmorModelEntry(new ResourceLocation(BoneTown.MODID,
                 "biped.default_armor"), new ResourceLocation(BoneTown.MODID, "biped"),
                 new ResourceLocation(BoneTown.MODID, "biped_armor"), head, body, legs, feet));

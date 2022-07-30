@@ -95,27 +95,31 @@ public abstract class BTEntityRenderer<T extends Entity> extends EntityRenderer<
                        MultiBufferSource bufferIn, int packedLightIn) {
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         boolean visible = this.isVisible(entityIn);
-        boolean visibleToPlayer = !visible && !entityIn.isInvisibleTo(Minecraft.getInstance().player);
-        RenderType rendertype = this.getRenderType(entityIn, visible, visibleToPlayer);
-        bufferIn.getBuffer(rendertype);
-        IBTMaterial program = MaterialResourceManager.INSTANCE.getShaderProgram(model.getProgramName());
+        boolean visibleToPlayer = !visible
+                && !entityIn.isInvisibleTo(Minecraft.getInstance().player);
+        final var rendertype = this.getRenderType(entityIn, visible, visibleToPlayer);
+        // buffer
+        {
+            bufferIn.getBuffer(rendertype);
+        }
+        final var program = MaterialResourceManager.INSTANCE.getShaderProgram(model.getProgramName());
         if (!modelRenderData.isInitialized()){
            initializeRender(program);
         }
-        GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
-        Matrix4f projMatrix = gameRenderer.getProjectionMatrix(90); // TODO - Calculate FOV
+        final var gameRenderer = Minecraft.getInstance().gameRenderer;
+        final var projMatrix = gameRenderer
+                .getProjectionMatrix(90); // TODO - Calculate FOV
+
         int packedOverlay;
-        if (entityIn instanceof LivingEntity){
+        if (entityIn instanceof LivingEntity)
             packedOverlay = LivingEntityRenderer.getOverlayCoords((LivingEntity) entityIn, partialTicks);
-        } else {
+         else
             packedOverlay = OverlayTexture.NO_OVERLAY;
-        }
+
         drawModel(rendertype, entityIn,
                 entityYaw, partialTicks, matrixStackIn,
                 projMatrix, packedLightIn,
                 packedOverlay, program, bufferIn);
-
-
     }
 
 

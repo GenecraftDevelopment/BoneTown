@@ -74,6 +74,7 @@ public class AnimatedArmorLayer<T extends LivingEntity & IBTAnimatedEntity<T>> e
 
     public ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot,
                                              @Nullable String type) {
+        // TODO: Armor Layer Texture
         ArmorItem item = (ArmorItem)stack.getItem();
         String texture = item.getMaterial().getName();
         String domain = "minecraft";

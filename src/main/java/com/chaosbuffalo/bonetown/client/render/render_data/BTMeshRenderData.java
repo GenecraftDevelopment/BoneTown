@@ -38,35 +38,40 @@ public class BTMeshRenderData implements IBTRenderData {
     public void uploadBuffers() {
         int vboId = genVBO();
 
-
         // Position Data
         ByteBuffer posByteBuffer = MemoryTracker.create(mesh.positions.length * 4);
         FloatBuffer posBuffer = posByteBuffer.asFloatBuffer();
         posBuffer.put(mesh.positions).flip();
-        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, posByteBuffer, GL_STATIC_DRAW);
-        GlStateManagerExtended.enableVertexAttribArray(0);
-        GlStateManagerExtended._vertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        {
+            GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, posByteBuffer, GL_STATIC_DRAW);
+            GlStateManagerExtended.enableVertexAttribArray(0);
+            GlStateManagerExtended._vertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+        }
 
         // UV Data
         vboId = genVBO();
         ByteBuffer textCoordsByteBuffer = MemoryTracker.create(mesh.texCoords.length * 4);
         FloatBuffer textCoordsBuffer = textCoordsByteBuffer.asFloatBuffer();
         textCoordsBuffer.put(mesh.texCoords).flip();
-        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, textCoordsByteBuffer, GL_STATIC_DRAW);
-        GlStateManagerExtended.enableVertexAttribArray(1);
-        GlStateManagerExtended._vertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        {
+            GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, textCoordsByteBuffer, GL_STATIC_DRAW);
+            GlStateManagerExtended.enableVertexAttribArray(1);
+            GlStateManagerExtended._vertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        }
 
         // Normal Data
         vboId = genVBO();
         ByteBuffer vecNormalsByteBuffer =MemoryTracker.create(mesh.normals.length * 4);
         FloatBuffer vecNormalsBuffer = vecNormalsByteBuffer.asFloatBuffer();
         vecNormalsBuffer.put(mesh.normals).flip();
-        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, vecNormalsByteBuffer, GL_STATIC_DRAW);
-        GlStateManagerExtended.enableVertexAttribArray(2);
-        GlStateManagerExtended._vertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+        {
+            GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            GlStateManagerExtended._glBufferData(GL_ARRAY_BUFFER, vecNormalsByteBuffer, GL_STATIC_DRAW);
+            GlStateManagerExtended.enableVertexAttribArray(2);
+            GlStateManagerExtended._vertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+        }
 
 
         // Indices Data
@@ -74,8 +79,10 @@ public class BTMeshRenderData implements IBTRenderData {
         ByteBuffer indicesByteBuffer = MemoryTracker.create(mesh.indices.length * 4);
         IntBuffer indicesBuffer = indicesByteBuffer.asIntBuffer();
         indicesBuffer.put(mesh.indices).flip();
-        GlStateManagerExtended._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
-        GlStateManagerExtended._glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesByteBuffer, GL_STATIC_DRAW);
+        {
+            GlStateManagerExtended._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
+            GlStateManagerExtended._glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesByteBuffer, GL_STATIC_DRAW);
+        }
     }
 
     protected int genVBO(){
@@ -117,10 +124,12 @@ public class BTMeshRenderData implements IBTRenderData {
 
     @Override
     public void upload() {
-        vaoId = GlStateManagerExtended.genVertexArrays();
+        this.vaoId = GlStateManagerExtended.genVertexArrays();
         GlStateManagerExtended.bindVertexArray(vaoId);
-        uploadBuffers();
-        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, 0);
+        {
+            uploadBuffers();
+        }
         GlStateManagerExtended.bindVertexArray(0);
+        GlStateManagerExtended._glBindBuffer(GL_ARRAY_BUFFER, 0); // reset array buffer
     }
 }
