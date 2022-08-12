@@ -8,8 +8,6 @@ import com.chaosbuffalo.bonetown.entity.animation_state.messages.AnimationMessag
 import com.chaosbuffalo.bonetown.entity.animation_state.messages.layer.AnimationLayerMessage;
 import com.chaosbuffalo.bonetown.network.EntityAnimationClientUpdatePacket;
 import com.chaosbuffalo.bonetown.network.PacketHandler;
-import com.mojang.datafixers.types.templates.CompoundList;
-import com.mojang.math.Constants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -29,8 +27,12 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     private final T entity;
     private int ticks;
     private final Map<String, AnimationState<T>> animationStates;
+
     private final Pose workFrame;
-    private static final Pose DEFAULT_FRAME = new Pose();
+
+    public static Pose DEFAULT_FRAME = new Pose();
+    private final Pose defaultFrame;
+
     private int lastPoseFetch;
     private float lastPartialTicks;
     public static final String INVALID_STATE = "invalid";
@@ -45,17 +47,25 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     }
 
     public AnimationComponent(T entity){
+        if(entity.getSkeleton() == null) {
+            BoneTown.LOGGER.error("Entity {} must have skeleton.", entity.getClass().getName());
+            throw new IllegalStateException("Missing skeleton.");
+        }
+
         this.entity = entity;
-        ticks = 0;
+        this.ticks = 0;
         this.syncQueue = new ArrayList<>();
         this.stateStack = new Stack<>();
-        animationStates = new HashMap<>();
-        workFrame = new Pose();
-        if (entity.getSkeleton() != null){
-            workFrame.setJointCount(entity.getSkeleton().getBones().size());
-        }
-        lastPoseFetch = -1;
-        lastPartialTicks = 0;
+        this.animationStates = new HashMap<>();
+
+        this.workFrame = entity.getSkeleton()
+                .getBindPose();
+        this.workFrame.setJointCount(entity.getSkeleton().getBones().size());
+        this.defaultFrame = workFrame; // default to t-pose
+
+
+        this.lastPoseFetch = -1;
+        this.lastPartialTicks = 0;
     }
 
     public void addAnimationState(AnimationState<T> animState){
@@ -148,13 +158,13 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     }
 
     public IPose getCurrentPose(float partialTicks){
-        if (isSamePose(partialTicks)){
-            return workFrame;
-        }
+        if (isSamePose(partialTicks)) return workFrame;
+
         if (getCurrentStateName().equals(INVALID_STATE)){
             BoneTown.LOGGER.warn("Animation for entity: {} currently in invalid state", getEntity().toString());
-            return DEFAULT_FRAME;
+            return defaultFrame;
         }
+
         AnimationState<T> state = getState(getCurrentStateName());
         if (state != null){
             state.applyToPose(ticks, partialTicks, workFrame);
@@ -164,7 +174,7 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
         } else {
             BoneTown.LOGGER.warn("Animation for entity: {} state not found: {}",
                     getEntity().toString(), getCurrentStateName());
-            return DEFAULT_FRAME;
+            return defaultFrame;
         }
     }
 

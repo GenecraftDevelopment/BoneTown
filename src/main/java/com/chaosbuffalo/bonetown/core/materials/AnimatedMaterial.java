@@ -5,7 +5,8 @@ import com.chaosbuffalo.bonetown.core.animation.AnimationFrame;
 import com.chaosbuffalo.bonetown.core.animation.IPose;
 import com.mojang.blaze3d.shaders.Program;
 
-public class AnimatedMaterial extends BTMaterial {
+public class AnimatedMaterial
+        extends BTMaterial {
 
     public MaterialUniform jointsUniform;
     public MaterialUniform inverseBindPoseUniform;

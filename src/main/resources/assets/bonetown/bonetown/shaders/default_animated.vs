@@ -24,18 +24,26 @@ void main()
     vec4 initPos = vec4(0, 0, 0, 0);
     vec4 initNormal = vec4(0, 0, 0, 0);
     outTexCoord = texCoord;
+
     for(int i = 0; i < MAX_WEIGHTS; i++)
     {
         float weight = jointWeights[i];
         if(weight > 0) {
             int jointIndex = jointIndices[i];
-            vec4 tmpPos = joints_matrix[jointIndex] * inverse_bind_pose[jointIndex] * vec4(position, 1.0);
-            initPos += weight * tmpPos;
-            vec4 tmpNormal = joints_matrix[jointIndex] * inverse_bind_pose[jointIndex] * vec4(vertexNormal, 0.0);
+
+            mat4 jMat = joints_matrix[jointIndex];
+            mat4 iMat = inverse_bind_pose[jointIndex];
+            mat4 rMat = jMat * iMat;
+
+            vec4 localPosition = rMat * vec4(position, 1);
+            initPos = weight * localPosition;
+
+            vec4 tmpNormal = rMat * vec4(vertexNormal, 0);
             initNormal += weight * tmpNormal;
         }
     }
     normal = normalize(model_view * initNormal).xyz;
     vertex = vec3(model_view * initPos);
+
     gl_Position = proj_mat * model_view * initPos;
 }

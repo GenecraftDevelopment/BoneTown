@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEntity<T>> extends BTEntityRenderer<T> {
     private BTAnimatedModel animatedModel;
     private final List<IBTAnimatedLayerRenderer<T>> renderLayers;
@@ -48,27 +47,27 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
         return renderLayers;
     }
 
-    public void addRenderLayer(IBTAnimatedLayerRenderer<T> layer){
+    public void addRenderLayer(IBTAnimatedLayerRenderer<T> layer) {
         renderLayers.add(layer);
     }
 
-    public void handleEntityOrientation(PoseStack matrixStackIn, T entity, float partialTicks){
+    public void handleEntityOrientation(PoseStack matrixStackIn, T entity, float partialTicks) {
 
     }
 
 
-    public void moveMatrixStackToBone(T entityIn, String boneName, PoseStack matrixStack, IPose pose){
+    public void moveMatrixStackToBone(T entityIn, String boneName, PoseStack matrixStack, IPose pose) {
         BoneMFSkeleton skeleton = entityIn.getSkeleton();
-        if (skeleton != null){
+        if (skeleton != null) {
             int boneId = skeleton.getBoneId(boneName);
-            if (boneId != -1){
+            if (boneId != -1) {
                 Matrix4d boneMat = pose.getJointMatrix(boneId);
                 BTClientMathUtils.applyTransformToStack(boneMat, matrixStack);
             }
         }
     }
 
-    protected float getTimeAlive(T entity, float partialTicks){
+    protected float getTimeAlive(T entity, float partialTicks) {
         return entity.tickCount + partialTicks;
     }
 
@@ -80,24 +79,34 @@ public abstract class BTAnimatedEntityRenderer<T extends Entity & IBTAnimatedEnt
                           int packedOverlay, IBTMaterial program, MultiBufferSource buffer) {
         matrixStackIn.pushPose();
         handleEntityOrientation(matrixStackIn, entityIn, partialTicks);
-        program.initRender(renderType, matrixStackIn, projectionMatrix, packedLightIn, packedOverlay);
-        IPose pose = entityIn.getAnimationComponent().getCurrentPose(partialTicks);
-        BoneMFSkeleton skeleton = entityIn.getSkeleton();
-        if (skeleton != null){
-            // we need to upload this every render because if multiple models are sharing one shader
-            // the uniforms will be invalid for bind pose, we could consider caching last model rendered
-            // with a particular program and skip it
-            program.uploadInverseBindPose(skeleton.getInverseBindPose());
 
+        final IPose framePose;
+        // render model
+        {
+            program.initRender(renderType, matrixStackIn, projectionMatrix, packedLightIn, packedOverlay);
+            framePose = entityIn.getAnimationComponent()
+                    .getCurrentPose(partialTicks);
+
+            BoneMFSkeleton skeleton = entityIn.getSkeleton();
+            if (skeleton != null) {
+                // we need to upload this every render because if multiple models are sharing one shader
+                // the uniforms will be invalid for bind pose, we could consider caching last model rendered
+                // with a particular program and skip it
+                program.uploadInverseBindPose(skeleton.getInverseBindPose());
+            }
+            program.uploadAnimationFrame(framePose);
+
+            modelRenderData.render();
+            program.endRender(renderType);
         }
-        program.uploadAnimationFrame(pose);
 
-        modelRenderData.render();
-        program.endRender(renderType);
-        for (IBTAnimatedLayerRenderer<T> layer : getRenderLayers()){
-            layer.render(matrixStackIn, buffer, packedLightIn, entityIn, pose, partialTicks,
+
+        // render layers
+        for (IBTAnimatedLayerRenderer<T> layer : getRenderLayers()) {
+            layer.render(matrixStackIn, buffer, packedLightIn, entityIn, framePose, partialTicks,
                     getTimeAlive(entityIn, partialTicks), program, projectionMatrix);
         }
+
         matrixStackIn.popPose();
     }
 }

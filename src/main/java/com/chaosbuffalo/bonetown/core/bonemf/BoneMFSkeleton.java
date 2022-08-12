@@ -6,6 +6,8 @@ import com.chaosbuffalo.bonetown.core.animation.BakedAnimation;
 import com.chaosbuffalo.bonetown.core.animation.Pose;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4d;
+import org.joml.Vector4d;
+
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -120,34 +122,40 @@ public class BoneMFSkeleton {
 
     @Nullable
     public BakedAnimation bakeAnimation(ResourceLocation animName){
-
         BoneMFAnimation animation = getAnimation(animName);
-        if (animation == null){
+        if (animation == null)
             return null;
-        }
+
+        // set bone count
         List<AnimationFrame> frames = new ArrayList<>();
         for (long i = 0; i < animation.getFrameCount(); i++){
             AnimationFrame frame = new AnimationFrame();
             frame.setJointCount(getBones().size());
             frames.add(frame);
         }
-        for (BoneMFNode bone : getBones()){
+
+        // iterate through bone animations and store their animations
+        for (BoneMFNode bone : getBones()) {
             int index = getBoneId(bone.getName());
             int parentIndex = getBoneParentId(bone.getName());
-            BoneMFAnimationChannel channel = animation.getChannel(bone.getName());
-            if (channel != null){
+
+            BoneMFAnimationChannel channel
+                    = animation.getChannel(bone.getName());
+
+            if (channel != null) {
                 int frameCount = 0;
+
                 for (BoneMFNodeFrame nodeFrame : channel.getFrames()){
                     AnimationFrame frame = frames.get(frameCount);
-                    Matrix4d parentTransform;
-                    Matrix4d frameTransform = bone.calculateLocalTransform(nodeFrame.getTranslation(),
+                    final Matrix4d parentTransform
+                            = parentIndex != -1
+                            ? new Matrix4d(frame.getJointMatrix(parentIndex))
+                            : new Matrix4d();
+
+                    final var frameTransform = bone.calculateLocalTransform(nodeFrame.getTranslation(),
                             nodeFrame.getRotation(), nodeFrame.getScale());
+
                     frame.setLocalJointMatrix(index, frameTransform);
-                    if (parentIndex != -1){
-                        parentTransform = new Matrix4d(frame.getJointMatrix(parentIndex));
-                    } else {
-                        parentTransform = new Matrix4d();
-                    }
                     frame.setJointMatrix(index, parentTransform.mulAffine(frameTransform));
                     frameCount++;
                 }

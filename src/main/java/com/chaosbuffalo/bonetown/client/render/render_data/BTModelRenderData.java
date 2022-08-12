@@ -93,9 +93,9 @@ public class BTModelRenderData implements IBTRenderDataContainer {
 
     @Override
     public void render(){
-        if (!initialized){
+        if (!initialized)
             return;
-        }
+
         frameSinceLastRender = 0;
         for (IBTRenderData meshRenderData : meshData.values()){
             meshRenderData.render();

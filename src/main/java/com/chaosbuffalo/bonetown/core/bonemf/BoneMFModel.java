@@ -112,7 +112,6 @@ public class BoneMFModel {
             offset += vertices.size();
             if (getSkeleton().isPresent()) {
                 BoneMFSkeleton skeleton = getSkeleton().get();
-
                 for (BoneMFVertex vertex : vertices) {
                     int size = vertex.boneWeights.size();
 

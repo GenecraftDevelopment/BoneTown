@@ -14,8 +14,6 @@ uniform vec3 ambient_light;
 uniform vec3 diffuse_colors[2];
 uniform vec3 diffuse_locs[2];
 
-
-
 float getDiffuseCos(vec3 lightPos, vec3 vert, vec3 norm) {
     vec3 to_light = normalize(lightPos);
     vec3 vertex_normal = normalize(norm);
@@ -39,6 +37,6 @@ void main()
     vec3 lit = combined * vec3(lightmap) * vec3(texColor);
     vec3 overlayed = vec3(overlay) * lit;
 
-    //fragColor = vec4(overlayed, texColor.w);
-    fragColor = vec4(0.0, 0.0, 1.0, 1.0);
+    fragColor = vec4(overlayed, texColor.w);
+    //fragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }

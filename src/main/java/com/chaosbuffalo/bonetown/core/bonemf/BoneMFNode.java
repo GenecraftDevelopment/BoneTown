@@ -1,5 +1,6 @@
 package com.chaosbuffalo.bonetown.core.bonemf;
 
+import com.chaosbuffalo.bonetown.BoneTown;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
@@ -39,8 +40,8 @@ public class BoneMFNode {
         RRS
     }
 
-    public static InheritTypes getInheritTypeFromString(String typeIn){
-        switch (typeIn){
+    public static InheritTypes getInheritTypeFromString(String typeIn) {
+        switch (typeIn) {
             case "RSrs":
                 return InheritTypes.RSRS;
             case "RrSs":
@@ -56,24 +57,23 @@ public class BoneMFNode {
 
     @Override
     public String toString() {
-        StringBuilder attrs  = new StringBuilder();
+        StringBuilder attrs = new StringBuilder();
         Iterator<BoneMFAttribute> iter = attributes.iterator();
-        while(iter.hasNext())
-        {
+        while (iter.hasNext()) {
             attrs.append(iter.next().toString());
-            if(iter.hasNext()){
+            if (iter.hasNext()) {
                 attrs.append(",");
             }
         }
         return String.format("<BoneMFNode name='%s' " +
-                "translation='%s' rotation='%s' scaling='%s' numChildren='%d' attributes='%s'>", getName(),
+                        "translation='%s' rotation='%s' scaling='%s' numChildren='%d' attributes='%s'>", getName(),
                 getTranslation().toString(), getRotation().toString(),
                 getScaling().toString(), getChildren().size(), attrs.toString());
     }
 
     private boolean dirty;
 
-    public BoneMFNode(String name){
+    public BoneMFNode(String name) {
         this.name = name;
         this.children = new ArrayList<>();
         this.attributes = new ArrayList<>();
@@ -83,7 +83,7 @@ public class BoneMFNode {
         this.inheritType = InheritTypes.UNKNOWN;
         this.setTranslation(new Vector4d(0.0, 0.0, 0.0, 1.0));
         this.setRotation(new Vector4d(0.0, 0.0, 0.0, 1.0));
-        this.setScaling(new Vector4d(1.0, 1.0, 1.0, 1.0));
+        this.setScaling(new Vector4d(1, 1, 1, 1));
         this.setPreRotation(new Vector4d(0.0, 0.0, 0.0, 1.0));
         this.setPostRotation(new Vector4d(0.0, 0.0, 0.0, 1.0));
         this.setScalingPivot(new Vector4d(0.0, 0.0, 0.0, 1.0));
@@ -96,23 +96,23 @@ public class BoneMFNode {
 
     @Nullable
     public <T extends BoneMFAttribute> T getAttributeForType(BoneMFAttribute.AttributeTypes type,
-                                                             Class<T> clazz){
-        for (BoneMFAttribute attr : getAttributes()){
-            if (attr.getType() == type && clazz.isInstance(attr)){
-                return (T)attr;
+                                                             Class<T> clazz) {
+        for (BoneMFAttribute attr : getAttributes()) {
+            if (attr.getType() == type && clazz.isInstance(attr)) {
+                return (T) attr;
             }
         }
         return null;
     }
 
     @Nullable
-    public BoneMFMeshAttribute getMesh(){
+    public BoneMFMeshAttribute getMesh() {
         return getAttributeForType(BoneMFAttribute.AttributeTypes.MESH, BoneMFMeshAttribute.class);
     }
 
-    public boolean hasAttribute(BoneMFAttribute.AttributeTypes type){
-        for (BoneMFAttribute attr : getAttributes()){
-            if (attr.getType() == type){
+    public boolean hasAttribute(BoneMFAttribute.AttributeTypes type) {
+        for (BoneMFAttribute attr : getAttributes()) {
+            if (attr.getType() == type) {
                 return true;
             }
         }
@@ -120,38 +120,38 @@ public class BoneMFNode {
     }
 
     @Nullable
-    public BoneMFNode getNodeByName(String name){
+    public BoneMFNode getNodeByName(String name) {
         return getNodeWithCondition((BoneMFNode node) -> node.getName().equals(name));
     }
 
-    public List<BoneMFNode> getNodesWithCondition(Function<BoneMFNode, Boolean> condition){
+    public List<BoneMFNode> getNodesWithCondition(Function<BoneMFNode, Boolean> condition) {
         List<BoneMFNode> ret = new ArrayList<>();
         getNodesWithCondition(condition, ret);
         return ret;
     }
 
-    public List<BoneMFNode> getNodesOfType(BoneMFAttribute.AttributeTypes type){
+    public List<BoneMFNode> getNodesOfType(BoneMFAttribute.AttributeTypes type) {
         return getNodesWithCondition((BoneMFNode node) -> node.hasAttribute(type));
     }
 
-    private void getNodesWithCondition(Function<BoneMFNode, Boolean> condition, List<BoneMFNode> acc){
-        if (condition.apply(this)){
+    private void getNodesWithCondition(Function<BoneMFNode, Boolean> condition, List<BoneMFNode> acc) {
+        if (condition.apply(this)) {
             acc.add(this);
         }
-        for (BoneMFNode child : getChildren()){
+        for (BoneMFNode child : getChildren()) {
             child.getNodesWithCondition(condition, acc);
         }
     }
 
     @Nullable
-    public BoneMFNode getNodeWithCondition(Function<BoneMFNode, Boolean> condition){
+    public BoneMFNode getNodeWithCondition(Function<BoneMFNode, Boolean> condition) {
         BoneMFNode result = null;
-        if (condition.apply(this)){
+        if (condition.apply(this)) {
             result = this;
         } else {
-            for (BoneMFNode child : getChildren()){
+            for (BoneMFNode child : getChildren()) {
                 result = child.getNodeWithCondition(condition);
-                if (result != null){
+                if (result != null) {
                     break;
                 }
             }
@@ -160,7 +160,7 @@ public class BoneMFNode {
     }
 
     @Nullable
-    public BoneMFNode getNodeWithAttributeType(BoneMFAttribute.AttributeTypes type){
+    public BoneMFNode getNodeWithAttributeType(BoneMFAttribute.AttributeTypes type) {
         return getNodeWithCondition((BoneMFNode node) -> node.hasAttribute(type));
     }
 
@@ -177,11 +177,11 @@ public class BoneMFNode {
         return attributes;
     }
 
-    public void addAttribute(BoneMFAttribute attribute){
+    public void addAttribute(BoneMFAttribute attribute) {
         this.attributes.add(attribute);
     }
 
-    public void addChild(BoneMFNode node){
+    public void addChild(BoneMFNode node) {
         this.children.add(node);
     }
 
@@ -238,33 +238,33 @@ public class BoneMFNode {
         markDirty();
     }
 
-    private void markDirty(){
+    private void markDirty() {
         this.dirty = true;
-        for (BoneMFNode child : this.getChildren()){
+        for (BoneMFNode child : this.getChildren()) {
             child.markDirty();
         }
     }
 
-    private Vector3d fromVec4d(Vector4d otherVec){
+    private Vector3d fromVec4d(Vector4d otherVec) {
         return new Vector3d(otherVec.x, otherVec.y, otherVec.z);
     }
 
-    private Vector4d toVec4d(Vector3d otherVec) { return new Vector4d(otherVec.x, otherVec.y, otherVec.z, 1.0); }
+    private Vector4d toVec4d(Vector3d otherVec) {
+        return new Vector4d(otherVec.x, otherVec.y, otherVec.z, 1.0);
+    }
 
-    public static Matrix4d constructRotationMatrix(Vector4d vec){
+    public static Matrix4d constructRotationMatrix(Vector4d vec) {
         return new Matrix4d().rotateAffineZYX(vec.z(), vec.y(), vec.x());
     }
 
-    private Matrix4d extractRotation(Matrix4d matIn){
+    private Matrix4d extractRotation(Matrix4d matIn) {
         Vector3d eulerRot = new Vector3d();
         matIn.getEulerAnglesZYX(eulerRot);
         return new Matrix4d().rotateAffineZYX(eulerRot.z, eulerRot.y, eulerRot.x);
     }
 
-    public Matrix4d calculateGlobalTransform(Vector4d translation, Vector4d rotation, Vector4d scale){
+    public Matrix4d calculateGlobalTransform(Vector4d translation, Vector4d rotation, Vector4d scale) {
 //        BoneTown.LOGGER.info("==== Starting Node Transform Calculation: {}", getName());
-
-
 
         Matrix4d mTranslation = new Matrix4d().translation(fromVec4d(translation));
         Matrix4d mRotation = constructRotationMatrix(rotation);
@@ -276,23 +276,9 @@ public class BoneMFNode {
         Matrix4d mRotationOffset = new Matrix4d().translation(fromVec4d(getRotationOffset()));
         Matrix4d mRotationPivot = new Matrix4d().translation(fromVec4d(getRotationPivot()));
 
-//        BoneTown.LOGGER.info("mTranslation \n {} \n", mTranslation.toString());
-//        BoneTown.LOGGER.info("vRotation {}", rotation.toString());
-//        BoneTown.LOGGER.info("mRotation \n {} \n", mRotation.toString());
-//        BoneTown.LOGGER.info("vPostRotation {}", postRotation.toString());
-//        BoneTown.LOGGER.info("mPostRotation \n {} \n", mPostRotation.toString());
-//        BoneTown.LOGGER.info("vPreRotation {}", preRotation.toString());
-//        BoneTown.LOGGER.info("mPreRotation \n {} \n", mPreRotation.toString());
-//        BoneTown.LOGGER.info("mScaling \n {} \n", mScaling.toString());
-//        BoneTown.LOGGER.info("mScalingOffset \n {} \n", mScalingOffset.toString());
-//        BoneTown.LOGGER.info("mScalingPivot \n {} \n", mScalingPivot.toString());
-//        BoneTown.LOGGER.info("mRotationOffset \n {} \n", mPostRotation.toString());
-//        BoneTown.LOGGER.info("mRotationPivot \n {} \n", mRotationPivot.toString());
-
-
 
         Matrix4d parentGlobal;
-        if (getParent() != null){
+        if (getParent() != null) {
             parentGlobal = new Matrix4d(this.getParent().calculateGlobalTransform());
         } else {
             parentGlobal = new Matrix4d();
@@ -324,7 +310,7 @@ public class BoneMFNode {
 
 
         Matrix4d globalRotScale;
-        switch (getInheritType()){
+        switch (getInheritType()) {
             case RRSS: {
                 globalRotScale = new Matrix4d(parentGlobalRot).mulAffine(localRotMat)
                         .mulAffine(parentGlobalScale).mulAffine(localScaling);
@@ -392,27 +378,41 @@ public class BoneMFNode {
         return mGlobalTranslation.mulAffine(globalRotScale);
     }
 
-    public Matrix4d calculateLocalTransform(Vector4d translation, Vector4d rotation, Vector4d scale){
-        Matrix4d mTranslation = new Matrix4d().translation(fromVec4d(translation));
-        Matrix4d mRotation = constructRotationMatrix(rotation);
-        Matrix4d mPostRotation = constructRotationMatrix(getPostRotation());
-        Matrix4d mPreRotation = constructRotationMatrix(getPreRotation());
-        Matrix4d mScaling = new Matrix4d().scale(fromVec4d(scale));
-        Matrix4d mScalingOffset = new Matrix4d().translation(fromVec4d(getScalingOffset()));
-        Matrix4d mScalingPivot = new Matrix4d().translation(fromVec4d(getScalingPivot()));
-        Matrix4d mRotationOffset = new Matrix4d().translation(fromVec4d(getRotationOffset()));
-        Matrix4d mRotationPivot = new Matrix4d().translation(fromVec4d(getRotationPivot()));
-        Matrix4d mRotationPivotInverse = new Matrix4d(mRotationPivot).invertAffine();
-        Matrix4d mScalingPivotInverse = new Matrix4d(mScalingPivot).invertAffine();
+    /**
+     * Calculate bone's local transform.
+     *
+     * @param translation Bone translation.
+     * @param rotation    Bone rotation.
+     * @param scale       Bone scale.
+     * @return Matrix.
+     */
+    public Matrix4d calculateLocalTransform(Vector4d translation, Vector4d rotation, Vector4d scale) {
+        final var mTranslation = new Matrix4d().translation(fromVec4d(translation));
+        final var mRotation = constructRotationMatrix(rotation);
+        final var mPostRotation = constructRotationMatrix(getPostRotation());
+        final var mPreRotation = constructRotationMatrix(getPreRotation());
+        final var mScaling = new Matrix4d().scale(fromVec4d(scale));
+        final var mScalingOffset = new Matrix4d().translation(fromVec4d(getScalingOffset()));
+        final var mScalingPivot = new Matrix4d().translation(fromVec4d(getScalingPivot()));
+        final var mRotationOffset = new Matrix4d().translation(fromVec4d(getRotationOffset()));
+        final var mRotationPivot = new Matrix4d().translation(fromVec4d(getRotationPivot()));
+        final var mRotationPivotInverse = new Matrix4d(mRotationPivot).invertAffine();
+        final var mScalingPivotInverse = new Matrix4d(mScalingPivot).invertAffine();
 
-        Matrix4d localTransform = new Matrix4d(mTranslation).mulAffine(mRotationOffset).mulAffine(mRotationPivot)
-                .mulAffine(mPreRotation).mulAffine(mRotation).mulAffine(mPostRotation)
-                .mulAffine(mRotationPivotInverse).mulAffine(mScalingOffset)
-                .mulAffine(mScalingPivot).mulAffine(mScaling).mulAffine(mScalingPivotInverse);
-        return localTransform;
+        return new Matrix4d(mTranslation)
+                .mulAffine(mRotationOffset)
+                .mulAffine(mRotationPivot)
+                .mulAffine(mPreRotation)
+                .mulAffine(mRotation)
+                .mulAffine(mPostRotation)
+                .mulAffine(mRotationPivotInverse)
+                .mulAffine(mScalingOffset)
+                .mulAffine(mScalingPivot)
+                .mulAffine(mScaling)
+                .mulAffine(mScalingPivotInverse);
     }
 
-    public Matrix4d calculateGlobalTransform(){
+    public Matrix4d calculateGlobalTransform() {
         if (_globalTransform == null || dirty) {
             _globalTransform = calculateGlobalTransform(getTranslation(),
                     getRotation(), getScaling());

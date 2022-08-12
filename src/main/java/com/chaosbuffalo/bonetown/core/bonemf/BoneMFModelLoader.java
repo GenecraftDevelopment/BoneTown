@@ -182,17 +182,14 @@ public class BoneMFModelLoader {
 
     public static void loadAnimations(BoneMFModel model, CBORObject animationsCbor, ResourceLocation name){
         model.getSkeleton().ifPresent((BoneMFSkeleton skeleton) -> {
-            int count = animationsCbor.size();
-            int i = 0;
             for (CBORObject key : animationsCbor.getKeys()){
                 String animationName = key.AsString();
                 CBORObject animationCbor = animationsCbor.get(animationName);
-                ResourceLocation animName;
-                if (count > 1 ){
-                    animName = new ResourceLocation(name.getNamespace(), name.getPath() + "_" + count);
-                } else {
-                    animName = name;
-                }
+
+                final var identifier = animationName.substring(
+                        animationName.lastIndexOf("|") + 1
+                );
+                final var animName = new ResourceLocation(name.getNamespace(), identifier.toLowerCase());
                 skeleton.addAnimation(animName, parseAnimation(animationName, animationCbor));
             }
         });
