@@ -13,26 +13,19 @@ public class BoneMFAttribute {
     }
 
     public static AttributeTypes getAttributeTypeFromString(String attrType){
-        switch (attrType){
-            case "mesh":
-                return AttributeTypes.MESH;
-            case "skeleton":
-                return AttributeTypes.SKELETON;
-            default:
-                return AttributeTypes.NULL;
-        }
+        return switch (attrType) {
+            case "mesh" -> AttributeTypes.MESH;
+            case "skeleton" -> AttributeTypes.SKELETON;
+            default -> AttributeTypes.NULL;
+        };
     }
 
     public static String getAttributeNameFromType(AttributeTypes type){
-        switch (type){
-            case MESH:
-                return "mesh";
-            case SKELETON:
-                return "skeleton";
-            case NULL:
-            default:
-                return "null";
-        }
+        return switch (type) {
+            case MESH -> "mesh";
+            case SKELETON -> "skeleton";
+            default -> "null";
+        };
     }
 
     private final AttributeTypes type;

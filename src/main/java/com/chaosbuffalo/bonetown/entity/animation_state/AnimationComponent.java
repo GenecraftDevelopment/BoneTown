@@ -179,9 +179,8 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
     }
 
     public String getCurrentStateName() {
-        if (stateStack.empty()){
+        if (stateStack.empty())
             return INVALID_STATE;
-        }
         return stateStack.peek();
     }
 

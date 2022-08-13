@@ -134,17 +134,19 @@ public class BoneMFSkeleton {
             frames.add(frame);
         }
 
-        // iterate through bone animations and store their animations
+        // iterate through bones
         for (BoneMFNode bone : getBones()) {
             int index = getBoneId(bone.getName());
             int parentIndex = getBoneParentId(bone.getName());
 
+            // bone channel
             BoneMFAnimationChannel channel
                     = animation.getChannel(bone.getName());
 
             if (channel != null) {
                 int frameCount = 0;
 
+                // iterate through bone channel frames
                 for (BoneMFNodeFrame nodeFrame : channel.getFrames()){
                     AnimationFrame frame = frames.get(frameCount);
                     final Matrix4d parentTransform
@@ -152,8 +154,11 @@ public class BoneMFSkeleton {
                             ? new Matrix4d(frame.getJointMatrix(parentIndex))
                             : new Matrix4d();
 
-                    final var frameTransform = bone.calculateLocalTransform(nodeFrame.getTranslation(),
-                            nodeFrame.getRotation(), nodeFrame.getScale());
+                    final var frameTransform = bone.calculateLocalTransform(
+                            nodeFrame.getTranslation(),
+                            nodeFrame.getRotation(),
+                            nodeFrame.getScale()
+                    );
 
                     frame.setLocalJointMatrix(index, frameTransform);
                     frame.setJointMatrix(index, parentTransform.mulAffine(frameTransform));

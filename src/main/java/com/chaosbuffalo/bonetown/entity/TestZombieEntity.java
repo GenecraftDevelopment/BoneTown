@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -31,11 +32,6 @@ public class TestZombieEntity extends Zombie
     BTAnimatedModel animatedModel;
     BoneMFSkeleton skeleton;
 
-    private static final ResourceLocation IDLE_ANIM = new ResourceLocation(
-            BoneTown.MODID, "biped.idle");
-    private static final ResourceLocation RUN_ANIM = new ResourceLocation(
-            BoneTown.MODID, "biped.running");
-
     public TestZombieEntity(final EntityType<? extends TestZombieEntity> type, final Level worldIn) {
         super(type, worldIn);
         animatedModel = (BTAnimatedModel) BTModels.BIPED;
@@ -44,14 +40,10 @@ public class TestZombieEntity extends Zombie
         setupAnimationComponent();
     }
 
-
     @Override
-    public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand) {
-        if (getLevel().isClientSide && hand.equals(player.getUsedItemHand())) {
-            animationComponent.updateState(new PushStateMessage("flip"));
-            setNoAi(true);
-        }
-        return super.interactAt(player, vec, hand);
+    public InteractionResult interactAt(Player p_19980_, Vec3 p_19981_, InteractionHand p_19982_) {
+        this.setTarget(p_19980_);
+        return super.interactAt(p_19980_, p_19981_, p_19982_);
     }
 
     protected void setupAnimationComponent() {
@@ -59,6 +51,7 @@ public class TestZombieEntity extends Zombie
         final var animations = this.skeleton
                 .getAnimations()
                 .keySet();
+
         final var idleAnimation = animations
                 .stream()
                 .filter(resourceLocation -> resourceLocation.getPath().contains("idle"))
@@ -68,26 +61,31 @@ public class TestZombieEntity extends Zombie
                 .filter(resourceLocation -> resourceLocation.getPath().contains("move"))
                 .findFirst();
 
-        final var defaultState = new AnimationState<>("default", this);
-
-        // locomotion layer
-        if(idleAnimation.isPresent() && moveAnimation.isPresent()) {
-            final var locomotionLayer = new LocomotionLayer<>("locomotion",
-                    idleAnimation.get(),
-                    moveAnimation.get(),
-                    this, true
-            );
-            defaultState.addLayer(locomotionLayer);
-        }
-
-        // head layer
+        // layers
         {
-            final var headTrackingLayer = new HeadTrackingLayer<>("head", this,
-                    "mixamorig:Head");
-            defaultState.addLayer(headTrackingLayer);
+            final var defaultState = new AnimationState<>("default", this);
+
+            // locomotion layer
+            if (idleAnimation.isPresent() && moveAnimation.isPresent()) {
+                final var locomotionLayer = new LocomotionLayer<>("locomotion",
+                        idleAnimation.get(),
+                        moveAnimation.get(),
+                        this, true
+                );
+                defaultState.addLayer(locomotionLayer);
+            }
+
+            // head layer
+            {
+                final var headTrackingLayer = new HeadTrackingLayer<>("head", this,
+                        "mixamorig:Head");
+                defaultState.addLayer(headTrackingLayer);
+            }
+
+            animationComponent.addAnimationState(defaultState);
         }
 
-        animationComponent.addAnimationState(defaultState);
+        // default state
         animationComponent.pushState("default");
     }
 

@@ -31,10 +31,9 @@ mat4 scale(float c)
 
 void main()
 {
-
-    vec4 initPos = vec4(0, 0, 0, 0);
-    vec4 initNormal = vec4(0, 0, 0, 0);
-    outTexCoord = texCoord;
+    vec4 modPosition = vec4(0, 0, 0, 0);
+    vec4 modNormal   = vec4(0, 0, 0, 0);
+    outTexCoord      = texCoord;
 
     for(int i = 0; i < MAX_WEIGHTS; i++)
     {
@@ -47,14 +46,14 @@ void main()
             mat4 boneMat = pose * inverse; // joint space
 
             vec4 localPosition = boneMat * vec4(position, 1);
-            initPos = weight * localPosition;
+            modPosition = weight * localPosition;
 
             vec4 tmpNormal = boneMat * vec4(vertexNormal, 0);
-            initNormal += weight * tmpNormal;
+            modNormal += weight * tmpNormal;
         }
     }
-    normal = normalize(model_view * initNormal).xyz;
-    vertex = vec3(model_view * initPos);
+    normal = normalize(model_view * modNormal).xyz;
+    vertex = vec3(model_view * modPosition);
 
-    gl_Position = proj_mat * model_view * initPos;
+    gl_Position = proj_mat * model_view * modPosition;
 }

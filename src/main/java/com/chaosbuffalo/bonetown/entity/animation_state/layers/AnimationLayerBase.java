@@ -119,9 +119,8 @@ public abstract class AnimationLayerBase<T extends Entity & IBTAnimatedEntity<T>
 
     @Override
     public void processLayer(IPose basePose, int currentTime, float partialTicks, IPose outPose) {
-        if (!shouldRun()){
+        if (!shouldRun())
             return;
-        }
         doLayerWork(basePose, currentTime, partialTicks, outPose);
     }
 

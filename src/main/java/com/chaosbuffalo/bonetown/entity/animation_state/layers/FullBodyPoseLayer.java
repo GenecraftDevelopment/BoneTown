@@ -29,8 +29,7 @@ public class FullBodyPoseLayer<T extends Entity & IBTAnimatedEntity<T>> extends 
     void doLayerWork(IPose basePose, int currentTime, float partialTicks, IPose outPose) {
         BakedAnimation animation = getAnimation(BASE_SLOT);
         if (animation != null){
-            InterpolationFramesReturn ret = animation.getInterpolationFrames(
-                    currentTime - getStartTime(), shouldLoop(), partialTicks);
+            InterpolationFramesReturn ret = animation.getInterpolationFrames(currentTime - getStartTime(), shouldLoop(), partialTicks);
             weightedBlend.simpleBlend(ret.current, ret.next, ret.partialTick);
             outPose.copyPose(weightedBlend.getPose());
         }

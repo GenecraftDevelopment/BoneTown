@@ -123,7 +123,7 @@ public class AnimationState<T extends Entity & IBTAnimatedEntity<T>> {
     }
 
     public void applyToPose(int currentTicks, float partialTicks, IPose workFrame){
-        if (isValid()){
+        if (isValid()) {
             for (IAnimationLayer<T> layer : layers) {
                 layer.processLayer(skeleton.getBindPose(), currentTicks, partialTicks, workFrame);
             }

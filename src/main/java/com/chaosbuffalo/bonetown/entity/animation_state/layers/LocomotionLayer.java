@@ -14,13 +14,12 @@ public class LocomotionLayer<T extends LivingEntity & IBTAnimatedEntity<T>> exte
 
     @Override
     protected float getBlendAmount() {
-        return getEntity().getDeltaMovement().length() > 0.08 ? 1 : 0;
+        return getEntity().getDeltaMovement().length() > 0.085 ? 1 : 0;
     }
 
     private void computeDuration(){
         BakedAnimation anim = getAnimation(SECOND_SLOT);
-        if (anim != null){
+        if (anim != null)
             duration = anim.getTotalTicks();
-        }
     }
 }

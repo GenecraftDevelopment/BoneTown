@@ -74,17 +74,29 @@ public class HeadTrackingLayer<T extends LivingEntity & IBTAnimatedEntity<T>> ex
             } else {
                 rotateX = headPitch * ((float) Math.PI / 180F);
             }
-            Vector4d headRotation = new Vector4d(rotateX, rotateY, 0.0, 1.0);
-            Matrix4d headTransform = bone.calculateLocalTransform(bone.getTranslation(),
-                    headRotation, bone.getScaling());
+
+            final var headRotation = new Vector4d(
+                    rotateX,
+                    rotateY,
+                    0.0,
+                    1.0
+            );
+
+            final var headTransform = bone.calculateLocalTransform(
+                    bone.getTranslation(),
+                    headRotation,
+                    bone.getScaling()
+            );
+
             int boneId = skeleton.getBoneId(getBoneName());
             int parentBoneId = skeleton.getBoneParentId(getBoneName());
+
             Matrix4d parentTransform;
-            if (parentBoneId != -1) {
+            if (parentBoneId != -1)
                 parentTransform = new Matrix4d(outPose.getJointMatrix(parentBoneId));
-            } else {
+             else
                 parentTransform = new Matrix4d();
-            }
+
             outPose.setJointMatrix(boneId, parentTransform.mulAffine(headTransform));
         }
     }

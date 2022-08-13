@@ -51,14 +51,26 @@ public class BlendTwoPoseLayer<T extends Entity & IBTAnimatedEntity<T>> extends 
     void doLayerWork(IPose basePose, int currentTime, float partialTicks, IPose outPose) {
         BakedAnimation baseAnimation = getAnimation(BASE_SLOT);
         BakedAnimation blendAnimation = getAnimation(SECOND_SLOT);
+
         if (baseAnimation != null && blendAnimation != null){
-            InterpolationFramesReturn ret = baseAnimation.getInterpolationFrames(
-                    currentTime - getStartTime(), shouldLoop(), partialTicks);
-            anim1Blend.simpleBlend(ret.current, ret.next, ret.partialTick);
-            InterpolationFramesReturn ret2 = blendAnimation.getInterpolationFrames(
-                    currentTime - getStartTime(), shouldLoop(), partialTicks);
-            anim2Blend.simpleBlend(ret2.current, ret2.next, ret2.partialTick);
+
+            // blend first animation
+            {
+                InterpolationFramesReturn ret = baseAnimation.getInterpolationFrames(
+                        currentTime - getStartTime(), shouldLoop(), partialTicks);
+                anim1Blend.simpleBlend(ret.current, ret.next, ret.partialTick);
+            }
+
+            // blend second animation
+            {
+                InterpolationFramesReturn ret2 = blendAnimation.getInterpolationFrames(
+                        currentTime - getStartTime(), shouldLoop(), partialTicks);
+                anim2Blend.simpleBlend(ret2.current, ret2.next, ret2.partialTick);
+            }
+
+            // blend between two animations
             finalBlend.simpleBlend(anim1Blend.getPose(), anim2Blend.getPose(), getBlendAmount());
+
             outPose.copyPose(finalBlend.getPose());
         }
     }
