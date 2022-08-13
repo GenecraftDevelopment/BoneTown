@@ -31,6 +31,11 @@ public class TestZombieEntity extends Zombie
     BTAnimatedModel animatedModel;
     BoneMFSkeleton skeleton;
 
+    private static final ResourceLocation IDLE_ANIM = new ResourceLocation(
+            BoneTown.MODID, "biped.idle");
+    private static final ResourceLocation RUN_ANIM = new ResourceLocation(
+            BoneTown.MODID, "biped.running");
+
     public TestZombieEntity(final EntityType<? extends TestZombieEntity> type, final Level worldIn) {
         super(type, worldIn);
         animatedModel = (BTAnimatedModel) BTModels.BIPED;
@@ -50,7 +55,7 @@ public class TestZombieEntity extends Zombie
     }
 
     protected void setupAnimationComponent() {
-        if(this.skeleton == null) return;
+        if (this.skeleton == null) return;
         final var animations = this.skeleton
                 .getAnimations()
                 .keySet();
@@ -64,6 +69,8 @@ public class TestZombieEntity extends Zombie
                 .findFirst();
 
         final var defaultState = new AnimationState<>("default", this);
+
+        // locomotion layer
         if(idleAnimation.isPresent() && moveAnimation.isPresent()) {
             final var locomotionLayer = new LocomotionLayer<>("locomotion",
                     idleAnimation.get(),
@@ -73,24 +80,15 @@ public class TestZombieEntity extends Zombie
             defaultState.addLayer(locomotionLayer);
         }
 
-        final var headTrackingLayer = new HeadTrackingLayer<>("head", this,
-                "mixamorig:Head");
-        defaultState.addLayer(headTrackingLayer);
+        // head layer
+        {
+            final var headTrackingLayer = new HeadTrackingLayer<>("head", this,
+                    "mixamorig:Head");
+            defaultState.addLayer(headTrackingLayer);
+        }
 
         animationComponent.addAnimationState(defaultState);
         animationComponent.pushState("default");
-
-//        AnimationState<TestZombieEntity> flipState = new AnimationState<>("flip", this);
-//        FullBodyPoseLayer<TestZombieEntity> flipLayer = new FullBodyPoseLayer<>("flip", BACKFLIP_ANIM,
-//                this, false);
-//        flipState.addLayer(flipLayer);
-//        flipLayer.setEndCallback(() -> {
-//            if (level.isClientSide){
-//                animationComponent.updateState(new PopStateMessage());
-//                setNoAi(false);
-//            }
-//        });
-//        animationComponent.addAnimationState(flipState);
     }
 
     public TestZombieEntity(Level worldIn, double x, double y, double z) {

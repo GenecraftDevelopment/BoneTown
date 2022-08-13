@@ -180,6 +180,12 @@ public class BoneMFModelLoader {
         return mfNode;
     }
 
+    /**
+     * Load animations from model.
+     * @param model Model.
+     * @param animationsCbor CBOR Animations.
+     * @param name Model name.
+     */
     public static void loadAnimations(BoneMFModel model, CBORObject animationsCbor, ResourceLocation name){
         model.getSkeleton().ifPresent((BoneMFSkeleton skeleton) -> {
             for (CBORObject key : animationsCbor.getKeys()){

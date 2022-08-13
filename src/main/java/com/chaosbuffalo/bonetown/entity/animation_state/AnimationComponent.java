@@ -61,7 +61,7 @@ public class AnimationComponent<T extends Entity & IBTAnimatedEntity<T>> impleme
         this.workFrame = entity.getSkeleton()
                 .getBindPose();
         this.workFrame.setJointCount(entity.getSkeleton().getBones().size());
-        this.defaultFrame = workFrame; // default to t-pose
+        this.defaultFrame = DEFAULT_FRAME; // default to t-pose
 
 
         this.lastPoseFetch = -1;

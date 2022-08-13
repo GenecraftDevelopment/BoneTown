@@ -26,13 +26,13 @@ public class BTMaterials {
         event.getRegistry().register(
                 new BTMaterialEntry(
                         DEFAULT_STATIC_LOC,
-                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_static.vs"),
-                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_static.fs")));
+                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_static.vert"),
+                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_static.frag")));
         event.getRegistry().register(
                 new AnimatedMaterialEntry(
                     DEFAULT_ANIMATED_LOC,
-                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_animated.vs"),
-                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_animated.fs")));
+                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_animated.vert"),
+                        new ResourceLocation(BoneTown.MODID, "bonetown/shaders/default_animated.frag")));
 
     }
 }

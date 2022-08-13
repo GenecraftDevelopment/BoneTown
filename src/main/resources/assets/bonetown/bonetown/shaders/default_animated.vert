@@ -18,6 +18,17 @@ uniform mat4 proj_mat;
 uniform mat4 joints_matrix[MAX_JOINTS];
 uniform mat4 inverse_bind_pose[MAX_JOINTS];
 
+mat4 scale(float c)
+{
+    return mat4(
+        c, 0, 0, 0,
+        0, c, 0, 0,
+        0, 0, c, 0,
+        0, 0, 0, 1
+    );
+}
+
+
 void main()
 {
 
@@ -31,14 +42,14 @@ void main()
         if(weight > 0) {
             int jointIndex = jointIndices[i];
 
-            mat4 jMat = joints_matrix[jointIndex];
-            mat4 iMat = inverse_bind_pose[jointIndex];
-            mat4 rMat = jMat * iMat;
+            mat4 pose    = scale(0.015) * joints_matrix[jointIndex];
+            mat4 inverse = inverse_bind_pose[jointIndex];
+            mat4 boneMat = pose * inverse; // joint space
 
-            vec4 localPosition = rMat * vec4(position, 1);
+            vec4 localPosition = boneMat * vec4(position, 1);
             initPos = weight * localPosition;
 
-            vec4 tmpNormal = rMat * vec4(vertexNormal, 0);
+            vec4 tmpNormal = boneMat * vec4(vertexNormal, 0);
             initNormal += weight * tmpNormal;
         }
     }
